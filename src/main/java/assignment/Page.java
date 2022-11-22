@@ -1,4 +1,6 @@
 package assignment;
+import java.io.Serial;
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -8,9 +10,22 @@ import java.net.URL;
  *
  * TODO: Implement this!
  */
-public class Page {
+public class Page implements Serializable {
+
+    private static final long serialVersionUID = 6487935751107137193L;
     // The URL the page was located at.
     private URL url;
+
+    // contains all words that are in the page
+//    private Trie trie;
+
+//    public Page() {
+//        trie = new Trie();
+//    }
+//
+//    public Trie getTrie() {
+//        return trie;
+//    }
 
     /**
      * Creates a Page with a given URL.

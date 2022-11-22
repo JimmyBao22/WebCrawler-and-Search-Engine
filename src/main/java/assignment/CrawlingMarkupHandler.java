@@ -1,5 +1,6 @@
 package assignment;
 
+import java.io.File;
 import java.util.*;
 import java.net.*;
 import org.attoparser.simple.*;
@@ -12,14 +13,22 @@ import org.attoparser.simple.*;
  */
 public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
-    public CrawlingMarkupHandler() {}
+    private WebIndex webIndex;
+    private List<URL> urls;
+    private Page page;
+    private URL url;
+
+    public CrawlingMarkupHandler() {
+        webIndex = new WebIndex();
+        urls = new ArrayList<URL>();
+    }
 
     /**
     * This method returns the complete index that has been crawled thus far when called.
     */
     public Index getIndex() {
         // TODO: Implement this!
-        return new WebIndex();
+        return webIndex;
     }
 
     /**
@@ -28,7 +37,15 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public List<URL> newURLs() {
         // TODO: Implement this!
-        return new LinkedList<>();
+        List<URL> newURLs = new ArrayList<URL>(urls);
+        urls.clear();
+        return newURLs;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+        if (page != null) webIndex.addPage(page);
+        page = new Page(url);
     }
 
     /**
@@ -63,6 +80,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
         System.out.println("End of document");
+
+
     }
 
     /**
@@ -74,7 +93,19 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public void handleOpenElement(String elementName, Map<String, String> attributes, int line, int col) {
         // TODO: Implement this.
+        // important attribute such as href utilized to find links (however, there are useless hrefs...
+            // definitely need href for <a></a>, not sure about others
         System.out.println("Start element: " + elementName);
+
+        if (attributes != null && attributes.containsKey("href") && (new File(attributes.get("href")).isFile())) {
+            // add the link to urls
+            try {
+                urls.add(new URL(attributes.get("href")));
+                System.out.println(attributes.get("href"));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -98,7 +129,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public void handleText(char[] ch, int start, int length, int line, int col) {
         // TODO: Implement this.
-        System.out.print("Characters:    \"");
+         System.out.print("Characters:    \"");
 
         for(int i = start; i < start + length; i++) {
             // Instead of printing raw whitespace, we're escaping it
@@ -107,22 +138,43 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                     System.out.print("\\\\");
                     break;
                 case '"':
-                    System.out.print("\\\"");
+                    System.out.print("\"");
                     break;
                 case '\n':
-                    System.out.print("\\n");;
+                    System.out.print("\\n");
+                    break;
                 case '\r':
                     System.out.print("\\r");
                     break;
                 case '\t':
                     System.out.print("\\t");
                     break;
+                case ' ':
+                    System.out.print(" ");
+                    break;
                 default:
                     System.out.print(ch[i]);
+                    if (isCharacter(ch[i])) {
+                        // System.out.println("HERE");
+                        String current = String.valueOf(ch[i++]);
+                        while (i < start + length && isCharacter(ch[i])) {
+                            current += ch[i];
+                            i++;
+                        }
+                        current = current.toLowerCase();
+                        webIndex.getTrie().add(current, page);
+                        i--;
+                        System.out.print("(" + current + ")");
+                    }
                     break;
             }
         }
 
-        System.out.print("\"\n");
+        System.out.println("\"");
+    }
+
+    private boolean isCharacter(char i) {
+        char c = String.valueOf(i).toLowerCase().charAt(0);
+        return (c - 'a' >= 0 && c - 'z' <= 0) || (c - '0' >= 0 && c - '9' <= 0);
     }
 }
