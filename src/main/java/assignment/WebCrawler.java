@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.attoparser.ParseException;
 import org.attoparser.simple.*;
 import org.attoparser.config.ParseConfiguration;
 
@@ -12,6 +13,9 @@ import org.attoparser.config.ParseConfiguration;
  * to index.db.
  */
 public class WebCrawler {
+
+    private static CrawlingMarkupHandler handler;
+    private static HashSet<URL> usedURLs;
 
     /**
     * The WebCrawler's main method starts crawling a set of pages.  You can change this method as
@@ -37,18 +41,34 @@ public class WebCrawler {
 
         // Create a parser from the attoparser library, and our handler for markup.
         ISimpleMarkupParser parser = new SimpleMarkupParser(ParseConfiguration.htmlConfiguration());
-        CrawlingMarkupHandler handler = new CrawlingMarkupHandler();
+        handler = new CrawlingMarkupHandler();
+        usedURLs = new HashSet<>();
 
         // Try to start crawling, adding new URLS as we see them.
         try {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
                 URL url = remaining.poll();
-                handler.setUrl(url);
-                parser.parse(new InputStreamReader(url.openStream()), handler);
+                if (usedURLs.contains(url)) continue;
+                usedURLs.add(url);
 
-                // Add any new URLs
-                remaining.addAll(handler.newURLs());
+                try {
+
+//                if (!(new File(url.toString()).exists())) {
+//                    System.out.println(url.toString());
+//                    continue;
+//                }
+
+                    handler.setUrl(url);
+                    System.out.println(url.toString());
+
+                    parser.parse(new InputStreamReader(url.openStream()), handler);
+
+                    // Add any new URLs
+                    remaining.addAll(handler.newURLs());
+                } catch (FileNotFoundException e) {
+                    // TODO ask if this is fine, not sure how else to skip files that can't be found
+                }
             }
 
             handler.getIndex().save("index.db");
@@ -58,5 +78,9 @@ public class WebCrawler {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    public CrawlingMarkupHandler getHandler() {
+        return handler;
     }
 }

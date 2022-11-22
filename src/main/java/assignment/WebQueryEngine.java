@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class WebQueryEngine {
 
-    private HashSet<Page> pages;
+    private Collection<Page> pages;
     private WebIndex index;
 
     public WebQueryEngine(WebIndex index) {
@@ -37,23 +37,34 @@ public class WebQueryEngine {
      */
     public Collection<Page> query(String query) {
         // TODO: Implement this!
-        query = query.toLowerCase();
+        StringBuilder querySB = new StringBuilder(query.toLowerCase());
         boolean word = false;
         for (int i = 0; i < query.length(); i++) {
             char c = query.charAt(i);
-            if (c == '(' || c == ')' || c == '&' || c == '|') {
+            if (c == '&' || c == '|') {
                 word = false;
             }
             if (isCharacter(c)) {
+                // add an & sign due to implicit and
                 if (word && i > 0 && query.charAt(i-1) == ' ') {
-                    // add an & sign due to implicit and
                     query = query.substring(0, i-1) + "&" + query.substring(i);
+                }
+                else if (word && i > 0 && query.charAt(i-1) == '(') {
+                    if (i > 1) {
+                        query = query.substring(0, i-2) + "&" + query.substring(i);
+                    }
+                    else {
+                        query = "&" + query;
+                    }
+                }
+                else if (word && i > 0 && query.charAt(i-1) == ')') {
+                    query = query.substring(0, i) + "&" + query.substring(i);
                 }
                 word = true;
             }
         }
         QueryTree queryTree = new QueryTree(query);
-
+        pages = queryTree.dfs(index, queryTree.getRoot());
         return pages;
     }
 

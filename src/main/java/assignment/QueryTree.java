@@ -1,5 +1,10 @@
 package assignment;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 public class QueryTree {
 
     private String query;
@@ -7,19 +12,61 @@ public class QueryTree {
     private int index;
 
     public QueryTree(String query) {
-        this.query = query;
+        this.query = query.toLowerCase();
         root = new QueryTreeNode();
         index = 0;
         buildTree(root);
     }
 
+    // iterate over query tree by recursion
+    public Collection<Page> dfs(WebIndex webIndex, QueryTreeNode current) {
+        Collection<Page> pages = null;
+        if (current.getChildren().size() == 0) {
+            // this is a word
+            pages = webIndex.getTrie().getPages(current.getString());
+        }
+        else {
+            for (QueryTreeNode queryTreeNode : current.getChildren()) {
+                Collection<Page> returned = dfs(webIndex, queryTreeNode);
+//                if (returned == null) {
+//                    continue;
+//                }
+                if (current.getString().equals("&")) {
+                    for (Page page : returned) {
+                        pages.add(page);
+                    }
+                }
+                else {
+                    if (pages == null) {
+                        pages = returned;
+                    }
+                    else {
+                        Collection<Page> updated = new HashSet<>();
+                        for (Page page : returned) {
+                            if (pages.contains(page)) {
+                                updated.add(page);
+                            }
+                        }
+                        pages = updated;
+                    }
+                }
+            }
+        }
+        return pages;
+    }
+
     private void buildTree(QueryTreeNode current) {
         char curChar = query.charAt(index);
         index++;
+        while (index < query.length() && query.charAt(index) == ' ') {
+            index++;
+        }
         if (curChar == '(') {
-            // build based on left child
-            buildTree(current.getLeft());
-            current.getLeft().setParent(current);
+            // start to build
+            QueryTreeNode child = new QueryTreeNode();
+            current.getChildren().add(child);
+            child.setParent(current);
+            buildTree(child);
             buildTree(current);
         }
         else if (curChar == ')') {
@@ -28,8 +75,10 @@ public class QueryTree {
         else if (curChar == '&' || curChar == '|') {
             // build based on right child
             current.setString(String.valueOf(curChar));
-            buildTree(current.getRight());
-            current.getRight().setParent(current);
+            QueryTreeNode child = new QueryTreeNode();
+            current.getChildren().add(child);
+            child.setParent(current);
+            buildTree(child);
         }
         else if (isCharacter(index-1)) {
             // character following english alphabet // TODO check if this is correct
@@ -48,7 +97,6 @@ public class QueryTree {
         }
         else {
             System.err.println("invalid query");
-            return;
         }
     }
 
@@ -58,32 +106,30 @@ public class QueryTree {
         return (c - 'a' >= 0 && c - 'z' <= 0) || (c - '0' >= 0 && c - '9' <= 0);
     }
 
+    public QueryTreeNode getRoot() {
+        return root;
+    }
+
     public class QueryTreeNode {
 
         private String string;
-        private QueryTreeNode left, right, parent;
+        private QueryTreeNode parent;
+        private List<QueryTreeNode> children;
 
         public QueryTreeNode() {
-//            left = new QueryTreeNode();
-//            right = new QueryTreeNode();
-        }
-
-        public QueryTreeNode getLeft() {
-            if (left == null) {
-                left = new QueryTreeNode();
-            }
-            return left;
-        }
-
-        public QueryTreeNode getRight() {
-            if (right == null) {
-                right = new QueryTreeNode();
-            }
-            return right;
+            children = new ArrayList<>();
         }
 
         public QueryTreeNode getParent() {
             return parent;
+        }
+
+        public List<QueryTreeNode> getChildren() {
+            return children;
+        }
+
+        public String getString() {
+            return string;
         }
 
         public void setString(String string) {

@@ -44,7 +44,9 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
     public void setUrl(URL url) {
         this.url = url;
-        if (page != null) webIndex.addPage(page);
+        if (page != null) {
+            webIndex.addPage(page);
+        }
         page = new Page(url);
     }
 
@@ -97,15 +99,47 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             // definitely need href for <a></a>, not sure about others
         System.out.println("Start element: " + elementName);
 
-        if (attributes != null && attributes.containsKey("href") && (new File(attributes.get("href")).isFile())) {
-            // add the link to urls
+        if (attributes != null && attributes.containsKey("href")) {
+            // add the link to urls. Since file path is relative, need to find the correct file path
             try {
-                urls.add(new URL(attributes.get("href")));
-                System.out.println(attributes.get("href"));
+                StringBuilder urlLink = new StringBuilder(attributes.get("href"));
+
+                if (!checkEnding(urlLink)) return;
+
+                if (url != null) {
+                    // find the right relative file path
+                    int count = 1;
+                    while (urlLink.length() >= 3 && urlLink.substring(0, 3).equals("../")) {
+                        count++;
+                        urlLink = new StringBuilder(urlLink.substring(3));
+                    }
+
+                    StringBuilder currentURL = new StringBuilder(url.toString());
+                    for (int i = 0; i < count && currentURL.lastIndexOf("/") != -1; i++) {
+                        currentURL = new StringBuilder(currentURL.substring(0, currentURL.lastIndexOf("/")));
+                    }
+                    currentURL.append('/');
+
+                    urlLink = currentURL.append(urlLink);
+                }
+
+                URL newURL = new URL(urlLink.toString());
+                urls.add(newURL);
+                System.out.println("HERE " + url.toString() + " " + attributes.get("href") + " " + urlLink);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    // checks if the url ends in .txt, .htm, or .html
+    private boolean checkEnding(StringBuilder url) {
+        int n = url.length();
+        if ((n >= 4 && (url.substring(n-4).equals(".txt") || url.substring(n-4).equals(".htm"))) ||
+                (n >= 5 && url.substring(n-5).equals(".html"))) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -156,15 +190,15 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                     System.out.print(ch[i]);
                     if (isCharacter(ch[i])) {
                         // System.out.println("HERE");
-                        String current = String.valueOf(ch[i++]);
+                        StringBuilder current = new StringBuilder(String.valueOf(ch[i++]));
                         while (i < start + length && isCharacter(ch[i])) {
-                            current += ch[i];
+                            current.append(ch[i]);
                             i++;
                         }
-                        current = current.toLowerCase();
-                        webIndex.getTrie().add(current, page);
+                        String currentString = current.toString().toLowerCase();
+                        webIndex.getTrie().add(currentString, page);
                         i--;
-                        System.out.print("(" + current + ")");
+                        System.out.print("(" + currentString + ")");
                     }
                     break;
             }

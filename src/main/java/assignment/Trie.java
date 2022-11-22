@@ -20,6 +20,7 @@ public class Trie implements Serializable {
     }
 
     public void add(String word, Page storePage) {
+        word = word.toLowerCase();
         Trie current = this;
         for (int i = 0; i < word.length(); i++) {
             if (!current.getMap().containsKey(word.charAt(i))) {
@@ -36,7 +37,9 @@ public class Trie implements Serializable {
         }
     }
 
+    // TODO not sure if this is needed, since if isWord = true, then pages isn't empty
     public boolean contains(String word) {
+        word = word.toLowerCase();
         Trie current = this;
         for (int i = 0; i < word.length(); i++) {
             if (!current.getMap().containsKey(word.charAt(i))) {
@@ -46,6 +49,19 @@ public class Trie implements Serializable {
         }
 
         return current.getIsWord();
+    }
+
+    public List<Page> getPages(String word) {
+        word = word.toLowerCase();
+        Trie current = this;
+        for (int i = 0; i < word.length(); i++) {
+            if (!current.getMap().containsKey(word.charAt(i))) {
+                return null;
+            }
+            current = current.getMap().get(word.charAt(i));
+        }
+
+        return current.getPages();
     }
 
     public HashMap<Character, Trie> getMap() {
