@@ -20,7 +20,7 @@ public class QueryTree {
 
     // iterate over query tree by recursion
     public Collection<Page> dfs(WebIndex webIndex, QueryTreeNode current) {
-        Collection<Page> pages = null;
+        Collection<Page> pages = new HashSet<>();
         if (current.getChildren().size() == 0) {
             // this is a word
             pages = webIndex.getTrie().getPages(current.getString());
@@ -37,7 +37,7 @@ public class QueryTree {
                     }
                 }
                 else {
-                    if (pages == null) {
+                    if (pages.size() == 0) {
                         pages = returned;
                     }
                     else {

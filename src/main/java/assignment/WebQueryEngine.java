@@ -32,12 +32,12 @@ public class WebQueryEngine {
     /**
      * Returns a Collection of URLs (as Strings) of web pages satisfying the query expression.
      *
-     * @param query A query expression.
+     * @param queryString A query expression.
      * @return A collection of web pages satisfying the query.
      */
-    public Collection<Page> query(String query) {
+    public Collection<Page> query(String queryString) {
         // TODO: Implement this!
-        StringBuilder querySB = new StringBuilder(query.toLowerCase());
+        StringBuilder query = new StringBuilder(queryString.toLowerCase());
         boolean word = false;
         for (int i = 0; i < query.length(); i++) {
             char c = query.charAt(i);
@@ -47,23 +47,28 @@ public class WebQueryEngine {
             if (isCharacter(c)) {
                 // add an & sign due to implicit and
                 if (word && i > 0 && query.charAt(i-1) == ' ') {
-                    query = query.substring(0, i-1) + "&" + query.substring(i);
+                    query = new StringBuilder(query.substring(0, i-1)).append("&").append(new StringBuilder(query.substring(i)));
+//                    query = query.substring(0, i-1). + "&" + query.substring(i);
                 }
                 else if (word && i > 0 && query.charAt(i-1) == '(') {
                     if (i > 1) {
-                        query = query.substring(0, i-2) + "&" + query.substring(i);
+                        query = new StringBuilder(query.substring(0, i-2)).append("&").append(new StringBuilder(query.substring(i)));
+//                        query = query.substring(0, i-2) + "&" + query.substring(i);
                     }
                     else {
-                        query = "&" + query;
+                        query = new StringBuilder("&").append(query);
+//                        query = "&" + query;
                     }
                 }
                 else if (word && i > 0 && query.charAt(i-1) == ')') {
-                    query = query.substring(0, i) + "&" + query.substring(i);
+                    query = new StringBuilder(query.substring(0, i)).append("&").append(new StringBuilder(query.substring(i)));
+//                    query = query.substring(0, i) + "&" + query.substring(i);
                 }
                 word = true;
             }
         }
-        QueryTree queryTree = new QueryTree(query);
+        System.out.println(query);
+        QueryTree queryTree = new QueryTree(query.toString());
         pages = queryTree.dfs(index, queryTree.getRoot());
         return pages;
     }

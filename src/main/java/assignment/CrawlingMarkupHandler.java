@@ -17,10 +17,12 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     private List<URL> urls;
     private Page page;
     private URL url;
+    private boolean parseText;
 
     public CrawlingMarkupHandler() {
         webIndex = new WebIndex();
         urls = new ArrayList<URL>();
+        parseText = false;
     }
 
     /**
@@ -44,9 +46,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
     public void setUrl(URL url) {
         this.url = url;
-        if (page != null) {
-            webIndex.addPage(page);
-        }
         page = new Page(url);
     }
 
@@ -82,8 +81,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
         System.out.println("End of document");
-
-
+        webIndex.addPage(page);
     }
 
     /**
@@ -98,6 +96,14 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         // important attribute such as href utilized to find links (however, there are useless hrefs...
             // definitely need href for <a></a>, not sure about others
         System.out.println("Start element: " + elementName);
+
+        // do not parse certain tags that contain text that isn’t displayed on the screen
+        if (elementName.equals("style") || elementName.equals("script")) {
+            parseText = false;
+        }
+        else {
+            parseText = true;
+        }
 
         if (attributes != null && attributes.containsKey("href")) {
             // add the link to urls. Since file path is relative, need to find the correct file path
@@ -163,6 +169,11 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public void handleText(char[] ch, int start, int length, int line, int col) {
         // TODO: Implement this.
+
+        if (!parseText) {
+            return;
+        }
+
          System.out.print("Characters:    \"");
 
         for(int i = start; i < start + length; i++) {

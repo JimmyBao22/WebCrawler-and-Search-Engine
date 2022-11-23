@@ -49,7 +49,9 @@ public class WebCrawler {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
                 URL url = remaining.poll();
-                if (usedURLs.contains(url)) continue;
+                if (usedURLs.contains(url)) {
+                    continue;
+                }
                 usedURLs.add(url);
 
                 try {

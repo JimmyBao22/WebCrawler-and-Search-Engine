@@ -8,7 +8,6 @@ import java.net.URL;
  * methods to load and save indexes.
  */
 public class Index implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     /**
