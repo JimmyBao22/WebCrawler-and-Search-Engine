@@ -24,6 +24,7 @@ public class QueryTree {
         if (current.getChildren().size() == 0) {
             // this is a word
             pages = webIndex.getTrie().getPages(current.getString());
+            System.out.println(pages + " " + pages.size());
         }
         else {
             for (QueryTreeNode queryTreeNode : current.getChildren()) {
@@ -82,7 +83,7 @@ public class QueryTree {
         }
         else if (isCharacter(index-1)) {
             // character following english alphabet // TODO check if this is correct
-            int i = index-1;
+            int i = index;
             while (i < query.length() && isCharacter(i)) {
                 i++;
             }

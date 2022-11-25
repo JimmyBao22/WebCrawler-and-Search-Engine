@@ -8,7 +8,7 @@ public class TestWebIndexTrie {
     @Test
     void testContains() {
         WebCrawler webCrawler = new WebCrawler();
-        webCrawler.main(new String[]{"file:president96/test.html"});
+        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/president96/test.html"});
 
         WebIndex webIndex = (WebIndex) webCrawler.getHandler().getIndex();
         Assertions.assertTrue(webIndex.getTrie().contains("hello"));

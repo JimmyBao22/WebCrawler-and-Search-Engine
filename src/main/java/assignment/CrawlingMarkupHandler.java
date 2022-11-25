@@ -17,12 +17,15 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     private List<URL> urls;
     private Page page;
     private URL url;
-    private boolean parseText;
+    private Stack<Boolean> parseText;
+//    private boolean parseText;
+    private StringBuilder allText;
 
     public CrawlingMarkupHandler() {
         webIndex = new WebIndex();
-        urls = new ArrayList<URL>();
-        parseText = false;
+//        urls = new ArrayList<>();
+//        parseText = false;
+//        parseText = new Stack<>();
     }
 
     /**
@@ -39,7 +42,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public List<URL> newURLs() {
         // TODO: Implement this!
-        List<URL> newURLs = new ArrayList<URL>(urls);
+        List<URL> newURLs = new ArrayList<>(urls);
         urls.clear();
         return newURLs;
     }
@@ -68,6 +71,12 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentStart(long startTimeNanos, int line, int col) {
         // TODO: Implement this.
         System.out.println("Start of document");
+
+        // initiate instance variables
+        urls = new ArrayList<>();
+//        parseText = false;
+        parseText = new Stack<>();
+        allText = new StringBuilder();
     }
 
     /**
@@ -81,6 +90,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
         System.out.println("End of document");
+
         webIndex.addPage(page);
     }
 
@@ -93,16 +103,16 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public void handleOpenElement(String elementName, Map<String, String> attributes, int line, int col) {
         // TODO: Implement this.
-        // important attribute such as href utilized to find links (however, there are useless hrefs...
-            // definitely need href for <a></a>, not sure about others
         System.out.println("Start element: " + elementName);
 
         // do not parse certain tags that contain text that isn’t displayed on the screen
         if (elementName.equals("style") || elementName.equals("script")) {
-            parseText = false;
+//            parseText = false;
+            parseText.push(false);
         }
         else {
-            parseText = true;
+//            parseText = true;
+            parseText.push(true);
         }
 
         if (attributes != null && attributes.containsKey("href")) {
@@ -157,6 +167,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleCloseElement(String elementName, int line, int col) {
         // TODO: Implement this.
         System.out.println("End element:   " + elementName);
+
+        parseText.pop();
     }
 
     /**
@@ -170,11 +182,15 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleText(char[] ch, int start, int length, int line, int col) {
         // TODO: Implement this.
 
-        if (!parseText) {
+//        if (!parseText) {
+//            return;
+//        }
+
+        if (parseText.size() > 0 && !parseText.peek()) {
             return;
         }
 
-         System.out.print("Characters:    \"");
+        System.out.print("Characters:    \"");
 
         for(int i = start; i < start + length; i++) {
             // Instead of printing raw whitespace, we're escaping it
@@ -200,7 +216,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 default:
                     System.out.print(ch[i]);
                     if (isCharacter(ch[i])) {
-                        // System.out.println("HERE");
+//                         System.out.println("HERE");
                         StringBuilder current = new StringBuilder(String.valueOf(ch[i++]));
                         while (i < start + length && isCharacter(ch[i])) {
                             current.append(ch[i]);
