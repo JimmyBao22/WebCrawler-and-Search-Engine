@@ -92,6 +92,23 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         System.out.println("End of document");
 
         webIndex.addPage(page);
+
+        // parse all text at once. This is to make it easier to parse text, especially when text are
+            // in different lines and also in different tags
+
+        for (int i = 0; i < allText.length(); i++) {
+            if (!isCharacter(allText.charAt(i))) {
+                continue;
+            }
+            int j = i+1;
+            while (j < allText.length() && isCharacter(allText.charAt(j))) {
+                j++;
+            }
+            String currentString = allText.substring(i, j);
+            i = j-1;
+            webIndex.getTrie().add(currentString, page);
+            System.out.print("(" + currentString + ")");
+        }
     }
 
     /**
@@ -212,20 +229,22 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                     break;
                 case ' ':
                     System.out.print(" ");
+                    allText.append(ch[i]);
                     break;
                 default:
                     System.out.print(ch[i]);
                     if (isCharacter(ch[i])) {
+                        allText.append(ch[i]);
 //                         System.out.println("HERE");
-                        StringBuilder current = new StringBuilder(String.valueOf(ch[i++]));
-                        while (i < start + length && isCharacter(ch[i])) {
-                            current.append(ch[i]);
-                            i++;
-                        }
-                        String currentString = current.toString().toLowerCase();
-                        webIndex.getTrie().add(currentString, page);
-                        i--;
-                        System.out.print("(" + currentString + ")");
+//                        StringBuilder current = new StringBuilder(String.valueOf(ch[i++]));
+//                        while (i < start + length && isCharacter(ch[i])) {
+//                            current.append(ch[i]);
+//                            i++;
+//                        }
+//                        String currentString = current.toString().toLowerCase();
+//                        webIndex.getTrie().add(currentString, page);
+//                        i--;
+//                        System.out.print("(" + currentString + ")");
                     }
                     break;
             }

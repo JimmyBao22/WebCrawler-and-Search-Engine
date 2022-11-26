@@ -50,7 +50,7 @@ public class WebQueryEngine {
                 word = false;
                 query.append(c);
             }
-            else if (c == ')' || c == '(') {
+            else if (c == ')' || c == '(' || c == '!') {
                 query.append(c);
             }
             else if (isCharacter(c)) {

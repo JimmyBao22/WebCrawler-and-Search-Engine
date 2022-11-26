@@ -23,8 +23,18 @@ public class QueryTree {
         Collection<Page> pages = new HashSet<>();
         if (current.getChildren().size() == 0) {
             // this is a word
-            pages = webIndex.getTrie().getPages(current.getString());
-            System.out.println(pages + " " + pages.size());
+            if (current.getNegative()) {
+                // add all pages that do not contain this current string word
+                Collection<Page> unwantedPages = webIndex.getTrie().getPages(current.getString());
+                for (Page page : webIndex.getPages()) {
+                    if (!unwantedPages.contains(page)) {
+                        pages.add(page);
+                    }
+                }
+            }
+            else {
+                pages = webIndex.getTrie().getPages(current.getString());
+            }
         }
         else {
             for (QueryTreeNode queryTreeNode : current.getChildren()) {
@@ -32,7 +42,7 @@ public class QueryTree {
 //                if (returned == null) {
 //                    continue;
 //                }
-                if (current.getString().equals("&")) {
+                if (current.getString().equals("|")) {
                     for (Page page : returned) {
                         pages.add(page);
                     }
@@ -53,10 +63,14 @@ public class QueryTree {
                 }
             }
         }
+        System.out.println(pages + " " + pages.size());
         return pages;
     }
 
     private void buildTree(QueryTreeNode current) {
+        if (index >= query.length()) {
+            return;
+        }
         char curChar = query.charAt(index);
         index++;
         while (index < query.length() && query.charAt(index) == ' ') {
@@ -81,15 +95,18 @@ public class QueryTree {
             child.setParent(current);
             buildTree(child);
         }
-        else if (isCharacter(index-1)) {
+        else if (isCharacter(index-1) || curChar == '!') {
             // character following english alphabet // TODO check if this is correct
             int i = index;
             while (i < query.length() && isCharacter(i)) {
                 i++;
             }
 
-            String word = query.substring(index-1, i);
+            String word = curChar == '!' ? query.substring(index, i) : query.substring(index-1, i);
             current.setString(word);
+            if (curChar == '!') {
+                current.setNegative(true);
+            }
             index = i;
         }
         else if (curChar == ' ') {
@@ -116,9 +133,11 @@ public class QueryTree {
         private String string;
         private QueryTreeNode parent;
         private List<QueryTreeNode> children;
+        private boolean negative;
 
         public QueryTreeNode() {
             children = new ArrayList<>();
+            negative = false;
         }
 
         public QueryTreeNode getParent() {
@@ -133,12 +152,20 @@ public class QueryTree {
             return string;
         }
 
+        public boolean getNegative() {
+            return negative;
+        }
+
         public void setString(String string) {
             this.string = string;
         }
 
         public void setParent(QueryTreeNode parent) {
             this.parent = parent;
+        }
+
+        public void setNegative(boolean negative) {
+            this.negative = negative;
         }
     }
 }

@@ -22,7 +22,7 @@ public class WebIndex extends Index {
     // stores parsed pages, need quick lookup of certain information in the pages.
         // also need to utilize this for web servers
 
-    private List<Page> pages;
+    private Collection<Page> pages;
 
     // stores a all words in all pages, and it stores also a list of pages containing the words
     private Trie trie;
@@ -34,6 +34,10 @@ public class WebIndex extends Index {
 
     public void addPage(Page page) {
         pages.add(page);
+    }
+
+    public Collection<Page> getPages() {
+        return pages;
     }
 
     public Trie getTrie() {
