@@ -24,7 +24,7 @@ public class QueryTree {
         if (current.getChildren().size() == 0) {
             // this is a word
             if (current.getNegative()) {
-                // add all pages that do not contain this current string word
+                // add all pages that DO NOT contain this current string word
                 Collection<Page> unwantedPages = webIndex.getTrie().getPages(current.getString());
                 for (Page page : webIndex.getPages()) {
                     if (!unwantedPages.contains(page)) {
@@ -33,6 +33,7 @@ public class QueryTree {
                 }
             }
             else {
+                // add all pages that DO contain this current string word
                 pages = webIndex.getTrie().getPages(current.getString());
             }
         }

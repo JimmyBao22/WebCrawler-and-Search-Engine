@@ -54,11 +54,12 @@ public class WebQueryEngine {
                 query.append(c);
             }
             else if (isCharacter(c)) {
-                // add an & sign due to implicit and
+                // add an & sign due to implicit and. Whenever, you add implicit and, you need to add a set of parenthesis
                 if (word && i > 0 && queryString.charAt(i-1) == ' ') {
 //                    query = new StringBuilder(query.substring(0, i-1)).append("&").append(new StringBuilder(query.substring(i)));
 //                    query = query.substring(0, i-1). + "&" + query.substring(i);
                     query.append("&");
+                    query = new StringBuilder("(").append(query);
                 }
                 else if (word && i > 1 && queryString.charAt(i-1) == '(') {
 //                        query = new StringBuilder(query.substring(0, i-2)).append("&").append(new StringBuilder(query.substring(i)));
@@ -66,14 +67,69 @@ public class WebQueryEngine {
                     query.deleteCharAt(query.length()-1);
                     query.append('&');
                     query.append('(');
+                    query = new StringBuilder("(").append(query);
                 }
                 else if (word && i > 0 && queryString.charAt(i-1) == ')') {
 //                    query = new StringBuilder(query.substring(0, i)).append("&").append(new StringBuilder(query.substring(i)));
 //                    query = query.substring(0, i) + "&" + query.substring(i);
                     query.append('&');
+                    query = new StringBuilder("(").append(query);
                 }
                 query.append(c);
                 word = true;
+            }
+        }
+
+        int countCloseParenthesis = 0;
+        int countOperators = 0;
+        for (int i = 0; i < query.length(); i++) {
+            char c = query.charAt(i);
+            if (c == ')') {
+                countCloseParenthesis++;
+            }
+            else if (c == '|' || c == '&') {
+//                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
+//                    // place closed parenthesis before this character
+//                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
+//                    countCloseParenthesis++;
+//                    i++;
+//                }
+
+                countOperators++;
+            }
+//            else if (isCharacter(c) && i > 0 && query.charAt(i-1) == ')'
+//                    && countOperators != countCloseParenthesis && (countOperators > 1 || query.charAt(i-1) == ')')) {
+////            if (!isCharacter(c) && i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
+////            else if (isCharacter(c) && (i == query.length()-1 || !isCharacter(query.charAt(i+1))) &&
+////                    countOperators != countCloseParenthesis) {
+//                // need to add a close parenthesis
+//                // TODO better stringbuilder method for this?
+////                query = new StringBuilder(query.substring(0, i+1)).append(')').append(query.substring(i+1));
+//                query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
+//                i--;
+//            }
+        }
+
+        if (countOperators != countCloseParenthesis) {
+            // add closed parenthesis to the end
+            query.append(')');
+            countCloseParenthesis++;
+        }
+
+        System.out.println(countOperators + " " + countCloseParenthesis);
+
+        for (int i = query.length()-1; i >= 0; i--) {
+            char c = query.charAt(i);
+            if (c == ')') {
+                countCloseParenthesis--;
+            }
+            else if (c == '|' || c == '&') {
+                countOperators--;
+
+                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
+                    // place closed parenthesis before this character
+                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
+                }
             }
         }
 
