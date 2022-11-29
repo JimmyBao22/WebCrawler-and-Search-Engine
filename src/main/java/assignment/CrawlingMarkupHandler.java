@@ -88,16 +88,24 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             if (!isCharacter(allText.charAt(i))) {
                 continue;
             }
+
+            // loop over and find the current string, which is the substring from i to j
             int j = i+1;
             while (j < allText.length() && isCharacter(allText.charAt(j))) {
                 j++;
             }
-            String currentString = allText.substring(i, j);
+            String currentString = allText.substring(i, j).toLowerCase();
             i = j-1;
+
+            // add it to the hashmap that maps string to pages in webindex
             if (!webIndex.getStringtoPages().containsKey(currentString)) {
                 webIndex.getStringtoPages().put(currentString, new HashSet<>());
             }
             webIndex.getStringtoPages().get(currentString).add(page);
+            System.out.println(currentString + " " + webIndex.getStringtoPages().get(currentString).size());
+
+
+            // within each page, add it to a hashmap that maps consecutive words to each other. This allows for phrase queries
             if (lastWord != null) {
                 if (!page.getMapConsecutiveStrings().containsKey(lastWord)) {
                     page.getMapConsecutiveStrings().put(lastWord, new HashSet<>());
@@ -134,7 +142,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 urls.add(newURL);
 //                System.out.println("HERE " + url.toString() + " " + attributes.get("href") + " " + urlLink);
             } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+                System.err.println("Malformed URL discovered");
             }
         }
     }
@@ -165,8 +173,11 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         }
 
         for(int i = start; i < start + length; i++) {
-            if (isCharacter(ch[i]) || ch[i] == ' ') {
+            if (isCharacter(ch[i])) {
                 allText.append(ch[i]);
+            }
+            else if (ch[i] != '\n') {
+                allText.append(' ');
             }
         }
     }

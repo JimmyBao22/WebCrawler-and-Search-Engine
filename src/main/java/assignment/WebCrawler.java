@@ -45,19 +45,25 @@ public class WebCrawler {
         usedURLs = new HashSet<>();
 
         // Try to start crawling, adding new URLS as we see them.
-        int c = 0;
+        int count = 0;
         try {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
                 URL url = remaining.poll();
-//                if (url.toString().contains("#")) {
-//                    url = new URL(url.toString().substring(0, url.toString().indexOf('#')));
+                if (url.toString().contains("#")) {
+                    url = new URL(url.toString().substring(0, url.toString().indexOf('#')));
+                }
+
+//                if (url.toString().contains("?")) {
+//                    System.out.println(url.toString());
+//                    url = new URL(url.toString().substring(0, url.toString().indexOf('?')));
 //                }
-//                if (usedURLs.contains(url)) {
-//                    continue;
-//                }
+
+                if (usedURLs.contains(url)) {
+                    continue;
+                }
                 usedURLs.add(url);
-                c++;
+                count++;
 
                 try {
                     handler.setUrl(url);
@@ -65,21 +71,21 @@ public class WebCrawler {
                     parser.parse(new InputStreamReader(url.openStream()), handler);
 
                     // Add any new URLs
-//                    remaining.addAll(handler.newURLs());
-
-                    for (URL newURLS : handler.newURLs()) {
-                        if (newURLS.toString().contains("#")) {
-                            newURLS = new URL(newURLS.toString().substring(0, url.toString().indexOf('#')));
-                        }
-                        if (usedURLs.contains(newURLS)) {
-                            continue;
-                        }
-                        usedURLs.add(newURLS);
-                        remaining.add(newURLS);
-                    }
+                    remaining.addAll(handler.newURLs());
+//                    for (URL newURLS : handler.newURLs()) {
+//                        if (newURLS.toString().contains("#")) {
+//                            newURLS = new URL(newURLS.toString().substring(0, url.toString().indexOf('#')));
+//                        }
+//                        if (usedURLs.contains(newURLS)) {
+//                            continue;
+//                        }
+//                        usedURLs.add(newURLS);
+//                        remaining.add(newURLS);
+//                    }
 
                 } catch (Exception e) {
-                    System.err.println("Bad URL " + url);
+                    System.err.println("Unable to parse URL: " + url);
+//                    e.printStackTrace();
                 }
             }
 
@@ -93,7 +99,7 @@ public class WebCrawler {
 
         System.out.println();
         System.out.println(((WebIndex)(handler.getIndex())).getPages().size());
-        System.out.println(c);
+        System.out.println(count);
     }
 
     public CrawlingMarkupHandler getHandler() {

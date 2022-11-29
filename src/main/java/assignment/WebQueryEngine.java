@@ -41,6 +41,9 @@ public class WebQueryEngine {
 
         ArrayDeque<Token> tokenList = new ArrayDeque<>();
         for (int i = 0; i < queryString.length(); i++) {
+            if (queryString.charAt(i) == ' ') {
+                continue;
+            }
             Token current = getToken(queryString.substring(i));
             if (current == null) {          // invalid query found
                 return null;
@@ -58,10 +61,6 @@ public class WebQueryEngine {
 
     // iterate over query tree by recursion
     private Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
-        if (current == null) {
-            return null;
-        }
-
         Collection<Page> pages = new HashSet<>();
         Token currentToken = current.getToken();
         if (currentToken.isWord()) {
@@ -70,15 +69,19 @@ public class WebQueryEngine {
             if (currentToken.getNegation()) {
                 for (Page page : webIndex.getPages()) {
                     // add page only if the page does not contain the word
-                    if (!webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
+                    if (webIndex.getStringtoPages().get(currentToken.getWord()) != null &&
+                            !webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
                         pages.add(page);
                     }
                 }
             }
             else {
                 pages = webIndex.getStringtoPages().get(currentToken.getWord());
+                if (pages == null) {
+                    pages = new HashSet<>();
+                }
             }
-//            System.out.println(pages + " " + pages.size());
+            System.out.println(currentToken.getWord() + " " + pages.size());
         }
         else if (currentToken.isPhrase()) {
             // this is a phrase, search for full phrase in the webindex by iterating over phrase
@@ -158,6 +161,7 @@ public class WebQueryEngine {
     }
 
     private TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
+        // TODO can tokenlist be empty?
         Token currentToken = tokenList.poll();
         if (currentToken.isLeftParens()) {
             // recursively build the left subtree
@@ -179,7 +183,7 @@ public class WebQueryEngine {
             return new TreeNode(currentToken);
         }
         else {
-            System.err.println("Invalid Query");
+            System.err.println("Unable to Parse Query");
             return null;
         }
     }
@@ -200,7 +204,7 @@ public class WebQueryEngine {
         }
         else if (isCharacter(c) || c == '!'){
             int i = 1;
-            while (isCharacter(query.charAt(i))) {
+            while (i < query.length() && isCharacter(query.charAt(i))) {
                 i++;
             }
             i--;
@@ -215,7 +219,7 @@ public class WebQueryEngine {
             return new Token("Phrase", query.substring(0, query.indexOf('"', 1)), false);
         }
         else {
-            System.err.println("Invalid Query");
+            System.err.println("Invalid Character in Query");
             return null;
         }
     }
