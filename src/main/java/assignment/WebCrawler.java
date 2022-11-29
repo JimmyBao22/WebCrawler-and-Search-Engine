@@ -45,31 +45,41 @@ public class WebCrawler {
         usedURLs = new HashSet<>();
 
         // Try to start crawling, adding new URLS as we see them.
+        int c = 0;
         try {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
                 URL url = remaining.poll();
-                if (usedURLs.contains(url)) {
-                    continue;
-                }
-                usedURLs.add(url);
-
-                try {
-
-//                if (!(new File(url.toString()).exists())) {
-//                    System.out.println(url.toString());
+//                if (url.toString().contains("#")) {
+//                    url = new URL(url.toString().substring(0, url.toString().indexOf('#')));
+//                }
+//                if (usedURLs.contains(url)) {
 //                    continue;
 //                }
+                usedURLs.add(url);
+                c++;
 
+                try {
                     handler.setUrl(url);
-                    System.out.println(url.toString());
 
                     parser.parse(new InputStreamReader(url.openStream()), handler);
 
                     // Add any new URLs
-                    remaining.addAll(handler.newURLs());
-                } catch (FileNotFoundException e) {
-                    // TODO ask if this is fine, not sure how else to skip files that can't be found
+//                    remaining.addAll(handler.newURLs());
+
+                    for (URL newURLS : handler.newURLs()) {
+                        if (newURLS.toString().contains("#")) {
+                            newURLS = new URL(newURLS.toString().substring(0, url.toString().indexOf('#')));
+                        }
+                        if (usedURLs.contains(newURLS)) {
+                            continue;
+                        }
+                        usedURLs.add(newURLS);
+                        remaining.add(newURLS);
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("Bad URL " + url);
                 }
             }
 
@@ -80,6 +90,10 @@ public class WebCrawler {
             e.printStackTrace();
             System.exit(1);
         }
+
+        System.out.println();
+        System.out.println(((WebIndex)(handler.getIndex())).getPages().size());
+        System.out.println(c);
     }
 
     public CrawlingMarkupHandler getHandler() {

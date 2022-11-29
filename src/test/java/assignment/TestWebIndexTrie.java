@@ -3,10 +3,12 @@ package assignment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 public class TestWebIndexTrie {
 
     @Test
-    void testContains() {
+    void testContains() throws IOException {
         WebCrawler webCrawler = new WebCrawler();
         webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/president96/test.html"});
 

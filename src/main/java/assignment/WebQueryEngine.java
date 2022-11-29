@@ -88,7 +88,7 @@ public class WebQueryEngine {
                 countCloseParenthesis++;
             }
             else if (c == '|' || c == '&') {
-//                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
+//                if (countOperators != countCloseParenthesis) {
 //                    // place closed parenthesis before this character
 //                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
 //                    countCloseParenthesis++;
@@ -116,27 +116,34 @@ public class WebQueryEngine {
             countCloseParenthesis++;
         }
 
-        System.out.println(countOperators + " " + countCloseParenthesis);
-
-        for (int i = query.length()-1; i >= 0; i--) {
-            char c = query.charAt(i);
-            if (c == ')') {
-                countCloseParenthesis--;
-            }
-            else if (c == '|' || c == '&') {
-                countOperators--;
-
-                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
-                    // place closed parenthesis before this character
-                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
-                }
-            }
-        }
+//        System.out.println(query);
+//        System.out.println(countOperators + " " + countCloseParenthesis);
+//
+//        for (int i = query.length()-1; i >= 0; i--) {
+//            char c = query.charAt(i);
+//            if (c == ')') {
+//                countCloseParenthesis--;
+//            }
+//            else if (c == '|' || c == '&') {
+//                countOperators--;
+//
+////                System.out.println(i + " " + )
+//
+////                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
+//                if (countOperators > countCloseParenthesis) {
+//                    // place closed parenthesis before this character
+//                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
+//                    countCloseParenthesis++;
+//                }
+//
+//                System.out.println(query.substring(0, i) + " " + countOperators + " " + countCloseParenthesis);
+//            }
+//        }
 
         System.out.println(query);
-        QueryTree queryTree = new QueryTree(query.toString());
-        System.out.println("root string: " + queryTree.getRoot().getString());
-        pages = queryTree.dfs(index, queryTree.getRoot());
+//        QueryTree queryTree = new QueryTree(query.toString());
+//        System.out.println("root string: " + queryTree.getRoot().getString());
+//        pages = queryTree.dfs(index, queryTree.getRoot());
         return pages;
     }
 

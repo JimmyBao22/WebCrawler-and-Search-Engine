@@ -2,6 +2,8 @@ package assignment;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * The Page class holds anything that the QueryEngine returns to the server.  The field and method
@@ -16,16 +18,7 @@ public class Page implements Serializable {
     // The URL the page was located at.
     private URL url;
 
-    // contains all words that are in the page
-//    private Trie trie;
-
-//    public Page() {
-//        trie = new Trie();
-//    }
-//
-//    public Trie getTrie() {
-//        return trie;
-//    }
+    private HashMap<String, HashSet<String>> mapConsecutiveStrings;
 
     /**
      * Creates a Page with a given URL.
@@ -33,10 +26,15 @@ public class Page implements Serializable {
      */
     public Page(URL url) {
         this.url = url;
+        mapConsecutiveStrings = new HashMap<>();
     }
 
     /**
      * @return the URL of the page.
      */
     public URL getURL() { return url; }
+
+    public HashMap<String, HashSet<String>> getMapConsecutiveStrings() {
+        return mapConsecutiveStrings;
+    }
 }

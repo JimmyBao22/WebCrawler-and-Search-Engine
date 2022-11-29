@@ -25,11 +25,11 @@ public class WebIndex extends Index {
     private Collection<Page> pages;
 
     // stores a all words in all pages, and it stores also a list of pages containing the words
-    private Trie trie;
+//    private Trie trie;
 
     public WebIndex() {
         pages = new ArrayList<>();
-        trie = new Trie();
+//        trie = new Trie();
     }
 
     public void addPage(Page page) {
@@ -40,7 +40,7 @@ public class WebIndex extends Index {
         return pages;
     }
 
-    public Trie getTrie() {
-        return trie;
-    }
+//    public Trie getTrie() {
+//        return trie;
+//    }
 }
