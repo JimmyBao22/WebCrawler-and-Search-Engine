@@ -63,7 +63,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     */
     public void handleDocumentStart(long startTimeNanos, int line, int col) {
 
-        // initiate instance variables
+        // initialize instance variables
         urls = new ArrayList<>();
         parseText = new Stack<>();
         allText = new StringBuilder();
@@ -94,7 +94,10 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             }
             String currentString = allText.substring(i, j);
             i = j-1;
-            // webIndex.getTrie().add(currentString, page);
+            if (!webIndex.getStringtoPages().containsKey(currentString)) {
+                webIndex.getStringtoPages().put(currentString, new HashSet<>());
+            }
+            webIndex.getStringtoPages().get(currentString).add(page);
             if (lastWord != null) {
                 if (!page.getMapConsecutiveStrings().containsKey(lastWord)) {
                     page.getMapConsecutiveStrings().put(lastWord, new HashSet<>());

@@ -1,4 +1,7 @@
 package assignment;
+import com.sun.source.tree.Tree;
+
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
 
@@ -6,7 +9,6 @@ import java.util.*;
  * A query engine which holds an underlying web index and can answer textual queries with a
  * collection of relevant pages.
  *
- * TODO: Implement this!
  */
 public class WebQueryEngine {
 
@@ -25,7 +27,6 @@ public class WebQueryEngine {
      * @return A WebQueryEngine ready to be queried.
      */
     public static WebQueryEngine fromIndex(WebIndex index) {
-        // TODO: Implement this!
         return new WebQueryEngine(index);
     }
 
@@ -37,114 +38,186 @@ public class WebQueryEngine {
      */
     public Collection<Page> query(String queryString) {
         // TODO: Implement this!
-//        StringBuilder query = new StringBuilder(queryString.toLowerCase());
-        StringBuilder query = new StringBuilder();
-        boolean word = false;
+
+        ArrayDeque<Token> tokenList = new ArrayDeque<>();
         for (int i = 0; i < queryString.length(); i++) {
-            char c = queryString.charAt(i);
-            if (c == ' ') {
-                // can skip this character
-                continue;
+            Token current = getToken(queryString.substring(i));
+            if (current == null) {          // invalid query found
+                return null;
             }
-            else if (c == '&' || c == '|') {
-                word = false;
-                query.append(c);
-            }
-            else if (c == ')' || c == '(' || c == '!') {
-                query.append(c);
-            }
-            else if (isCharacter(c)) {
-                // add an & sign due to implicit and. Whenever, you add implicit and, you need to add a set of parenthesis
-                if (word && i > 0 && queryString.charAt(i-1) == ' ') {
-//                    query = new StringBuilder(query.substring(0, i-1)).append("&").append(new StringBuilder(query.substring(i)));
-//                    query = query.substring(0, i-1). + "&" + query.substring(i);
-                    query.append("&");
-                    query = new StringBuilder("(").append(query);
-                }
-                else if (word && i > 1 && queryString.charAt(i-1) == '(') {
-//                        query = new StringBuilder(query.substring(0, i-2)).append("&").append(new StringBuilder(query.substring(i)));
-//                        query = query.substring(0, i-2) + "&" + query.substring(i);
-                    query.deleteCharAt(query.length()-1);
-                    query.append('&');
-                    query.append('(');
-                    query = new StringBuilder("(").append(query);
-                }
-                else if (word && i > 0 && queryString.charAt(i-1) == ')') {
-//                    query = new StringBuilder(query.substring(0, i)).append("&").append(new StringBuilder(query.substring(i)));
-//                    query = query.substring(0, i) + "&" + query.substring(i);
-                    query.append('&');
-                    query = new StringBuilder("(").append(query);
-                }
-                query.append(c);
-                word = true;
+            tokenList.add(current);
+            if (current.isWord()) {
+                i += current.getWord().length() - 1;
             }
         }
 
-        int countCloseParenthesis = 0;
-        int countOperators = 0;
-        for (int i = 0; i < query.length(); i++) {
-            char c = query.charAt(i);
-            if (c == ')') {
-                countCloseParenthesis++;
-            }
-            else if (c == '|' || c == '&') {
-//                if (countOperators != countCloseParenthesis) {
-//                    // place closed parenthesis before this character
-//                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
-//                    countCloseParenthesis++;
-//                    i++;
-//                }
+        TreeNode root = parseQuery(tokenList);
 
-                countOperators++;
-            }
-//            else if (isCharacter(c) && i > 0 && query.charAt(i-1) == ')'
-//                    && countOperators != countCloseParenthesis && (countOperators > 1 || query.charAt(i-1) == ')')) {
-////            if (!isCharacter(c) && i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
-////            else if (isCharacter(c) && (i == query.length()-1 || !isCharacter(query.charAt(i+1))) &&
-////                    countOperators != countCloseParenthesis) {
-//                // need to add a close parenthesis
-//                // TODO better stringbuilder method for this?
-////                query = new StringBuilder(query.substring(0, i+1)).append(')').append(query.substring(i+1));
-//                query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
-//                i--;
-//            }
+        return dfs(index, root);
+    }
+
+    // iterate over query tree by recursion
+    private Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
+        if (current == null) {
+            return null;
         }
 
-        if (countOperators != countCloseParenthesis) {
-            // add closed parenthesis to the end
-            query.append(')');
-            countCloseParenthesis++;
+        Collection<Page> pages = new HashSet<>();
+        Token currentToken = current.getToken();
+        if (currentToken.isWord()) {
+            // this is a word, search for it in the webindex
+
+            if (currentToken.getNegation()) {
+                for (Page page : webIndex.getPages()) {
+                    // add page only if the page does not contain the word
+                    if (!webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
+                        pages.add(page);
+                    }
+                }
+            }
+            else {
+                pages = webIndex.getStringtoPages().get(currentToken.getWord());
+            }
+//            System.out.println(pages + " " + pages.size());
+        }
+        else if (currentToken.isPhrase()) {
+            // this is a phrase, search for full phrase in the webindex by iterating over phrase
+            String phrase = currentToken.getWord();
+            int spaceIndex = phrase.indexOf(' ');
+            String currWord = phrase.substring(0, spaceIndex);
+            pages = webIndex.getStringtoPages().get(currWord);
+
+            // continuously see if the page contains the consecutive words and updating the saved pages accordingly
+            while (spaceIndex != -1) {
+                String newWord = phrase.substring(spaceIndex+1, phrase.indexOf(' ', spaceIndex+1));
+                spaceIndex = phrase.indexOf(' ', spaceIndex+1);
+                Collection<Page> updatedPages = new HashSet<>();
+                for (Page page : pages) {
+                    if (page.getMapConsecutiveStrings().get(currWord).contains(newWord)) {
+                        updatedPages.add(page);
+                    }
+                }
+                currWord = newWord;
+                pages = updatedPages;
+            }
+        }
+        else {
+            Collection<Page> leftPages = dfs(webIndex, current.getLeft());
+            Collection<Page> rightPages = dfs(webIndex, current.getRight());
+
+            if (currentToken.isAnd()) {
+                // add all pages that are in both left and right subtrees into the current page
+                for (Page page : rightPages) {
+                    if (leftPages.contains(page)) {
+                        pages.add(page);
+                    }
+                }
+            } else if (currentToken.isOr()) {
+                // add all pages from left and right subtrees into the current page
+                for (Page page : leftPages) {
+                    pages.add(page);
+                }
+                for (Page page : rightPages) {
+                    pages.add(page);
+                }
+            } else {
+                System.err.println("Query Error");
+                return new HashSet<>();
+            }
         }
 
-//        System.out.println(query);
-//        System.out.println(countOperators + " " + countCloseParenthesis);
-//
-//        for (int i = query.length()-1; i >= 0; i--) {
-//            char c = query.charAt(i);
-//            if (c == ')') {
-//                countCloseParenthesis--;
-//            }
-//            else if (c == '|' || c == '&') {
-//                countOperators--;
-//
-////                System.out.println(i + " " + )
-//
-////                if (i > 0 && isCharacter(query.charAt(i-1)) && countOperators != countCloseParenthesis) {
-//                if (countOperators > countCloseParenthesis) {
-//                    // place closed parenthesis before this character
-//                    query = new StringBuilder(query.substring(0, i)).append(')').append(query.substring(i));
-//                    countCloseParenthesis++;
-//                }
-//
-//                System.out.println(query.substring(0, i) + " " + countOperators + " " + countCloseParenthesis);
-//            }
-//        }
-
-        System.out.println(query);
-//        QueryTree queryTree = new QueryTree(query.toString());
-//        System.out.println("root string: " + queryTree.getRoot().getString());
-//        pages = queryTree.dfs(index, queryTree.getRoot());
         return pages;
+    }
+
+    private TreeNode parseQuery(ArrayDeque<Token> tokenList) {
+        // detect whether or not an implicit and can occur
+        boolean canBeImplicitAnd = false;
+
+        ArrayDeque<Token> copy = new ArrayDeque<>();
+        while (!tokenList.isEmpty()) {
+            Token current = tokenList.poll();
+            if (canBeImplicitAnd && (current.isWord() || current.isPhrase() || current.isLeftParens())) {
+                // parse query due to implicit and
+                tokenList.push(current);
+
+                TreeNode currentNode = new TreeNode(new Token("And"));
+                TreeNode left = parseQueryPrime(copy);
+                TreeNode right = parseQuery(tokenList);
+                currentNode.setLeft(left);
+                currentNode.setRight(right);
+
+                return currentNode;
+            }
+
+            copy.add(current);
+
+            canBeImplicitAnd = (current.isWord() || current.isRightParens() || current.isPhrase());
+        }
+
+        return parseQueryPrime(copy);
+    }
+
+    private TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
+        Token currentToken = tokenList.poll();
+        if (currentToken.isLeftParens()) {
+            // recursively build the left subtree
+            TreeNode left = parseQueryPrime(tokenList);
+            // get the binary operator: AND or OR
+            Token operator = tokenList.poll();
+            // recursively build the right subtree
+            TreeNode right = parseQueryPrime(tokenList);
+            // read the remaining Right Parens
+            tokenList.poll();
+
+            TreeNode current = new TreeNode(operator);
+            current.setLeft(left);
+            current.setRight(right);
+
+            return current;
+        }
+        else if (currentToken.isWord() || currentToken.isPhrase()) {
+            return new TreeNode(currentToken);
+        }
+        else {
+            System.err.println("Invalid Query");
+            return null;
+        }
+    }
+
+    private Token getToken(String query) {
+        char c = query.charAt(0);
+        if (c == '&') {
+            return new Token("And");
+        }
+        else if (c == '|') {
+            return new Token("Or");
+        }
+        else if (c == '(') {
+            return new Token("Left Parenthesis");
+        }
+        else if (c == ')') {
+            return new Token("Right Parenthesis");
+        }
+        else if (isCharacter(c) || c == '!'){
+            int i = 1;
+            while (isCharacter(query.charAt(i))) {
+                i++;
+            }
+            i--;
+            if (c == '!') {
+                return new Token("Word", query.substring(1, i+1), true);
+            }
+            else {
+                return new Token("Word", query.substring(0, i+1), false);
+            }
+        }
+        else if (c == '"') {
+            return new Token("Phrase", query.substring(0, query.indexOf('"', 1)), false);
+        }
+        else {
+            System.err.println("Invalid Query");
+            return null;
+        }
     }
 
     private boolean isCharacter(char i) {
