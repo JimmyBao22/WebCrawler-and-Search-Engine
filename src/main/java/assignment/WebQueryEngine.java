@@ -49,14 +49,26 @@ public class WebQueryEngine {
                 return null;
             }
             tokenList.add(current);
-            if (current.isWord()) {
+            if (current.isWord() || current.isPhrase()) {
                 i += current.getWord().length() - 1;
+                if (current.getNegation()) {
+                    i++;
+                }
+                if (current.isPhrase()) {
+                    i += 2;
+                }
             }
         }
 
+//        while (!tokenList.isEmpty()) {
+//            System.out.println(tokenList.poll());
+//        }
+
         TreeNode root = parseQuery(tokenList);
 
-        return dfs(index, root);
+        Collection<Page> queriedPages = dfs(index, root);
+        System.out.println(queriedPages.size());
+        return queriedPages;
     }
 
     // iterate over query tree by recursion
@@ -86,27 +98,59 @@ public class WebQueryEngine {
         else if (currentToken.isPhrase()) {
             // this is a phrase, search for full phrase in the webindex by iterating over phrase
             String phrase = currentToken.getWord();
-            int spaceIndex = phrase.indexOf(' ');
-            String currWord = phrase.substring(0, spaceIndex);
-            pages = webIndex.getStringtoPages().get(currWord);
+            String lastWord = null;
+            HashMap<Page, List<Integer>> lastWordIndices = new HashMap<>();
 
-            // continuously see if the page contains the consecutive words and updating the saved pages accordingly
-            while (spaceIndex != -1) {
-                String newWord = phrase.substring(spaceIndex+1, phrase.indexOf(' ', spaceIndex+1));
-                spaceIndex = phrase.indexOf(' ', spaceIndex+1);
-                Collection<Page> updatedPages = new HashSet<>();
-                for (Page page : pages) {
-                    if (page.getMapConsecutiveStrings().get(currWord).contains(newWord)) {
-                        updatedPages.add(page);
+            for (int i = 0; i < phrase.length(); i++) {
+                if (!isCharacter(phrase.charAt(i))) {
+                    continue;
+                }
+
+                // loop over and find the current string, which is the substring from i to j
+                int j = i + 1;
+                while (j < phrase.length() && isCharacter(phrase.charAt(j))) {
+                    j++;
+                }
+                String currentWord = phrase.substring(i, j).toLowerCase();
+
+                if (lastWord == null) {
+                    for (Page page : webIndex.getStringtoPages().get(currentWord)) {
+                        lastWordIndices.put(page, page.getMapStringtoIndex().get(currentWord));
                     }
                 }
-                currWord = newWord;
-                pages = updatedPages;
+                else {
+                    // only add pages that contain a phrase with the current and last words consecutively appearing on the webpage
+                    HashMap<Page, List<Integer>> updatedWordIndices = new HashMap<>();
+                    for (Page page : lastWordIndices.keySet()) {
+                        List<Integer> lastIndices = lastWordIndices.get(page);
+                        List<Integer> indices = new ArrayList<>();
+                        for (int k = 0; k < lastIndices.size(); k++) {
+                            int lastIndex = lastIndices.get(k);
+                            if (page.getMapIndextoString().get(lastIndex + 1).equals(currentWord)) {
+                                indices.add(lastIndex + 1);
+                            }
+                        }
+
+                        if (indices.size() > 0) {
+                            updatedWordIndices.put(page, indices);
+                        }
+                    }
+
+                    lastWordIndices = updatedWordIndices;
+                }
+
+                lastWord = currentWord;
+                i = j - 1;
             }
+
+            pages = lastWordIndices.keySet();
         }
         else {
             Collection<Page> leftPages = dfs(webIndex, current.getLeft());
             Collection<Page> rightPages = dfs(webIndex, current.getRight());
+
+            System.out.println("left: " + leftPages.size());
+            System.out.println("right: " + rightPages.size());
 
             if (currentToken.isAnd()) {
                 // add all pages that are in both left and right subtrees into the current page
@@ -115,7 +159,8 @@ public class WebQueryEngine {
                         pages.add(page);
                     }
                 }
-            } else if (currentToken.isOr()) {
+            }
+            else if (currentToken.isOr()) {
                 // add all pages from left and right subtrees into the current page
                 for (Page page : leftPages) {
                     pages.add(page);
@@ -123,7 +168,8 @@ public class WebQueryEngine {
                 for (Page page : rightPages) {
                     pages.add(page);
                 }
-            } else {
+            }
+            else {
                 System.err.println("Query Error");
                 return new HashSet<>();
             }

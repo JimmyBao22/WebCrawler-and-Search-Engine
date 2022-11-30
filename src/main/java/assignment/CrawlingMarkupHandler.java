@@ -83,7 +83,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
         // parse all text at once. This is to make it easier to parse text, especially when text are
             // in different lines and also in different tags
-        String lastWord = null;
+        int wordIndex = 0;
         for (int i = 0; i < allText.length(); i++) {
             if (!isCharacter(allText.charAt(i))) {
                 continue;
@@ -105,14 +105,16 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             System.out.println(currentString + " " + webIndex.getStringtoPages().get(currentString).size());
 
 
-            // within each page, add it to a hashmap that maps consecutive words to each other. This allows for phrase queries
-            if (lastWord != null) {
-                if (!page.getMapConsecutiveStrings().containsKey(lastWord)) {
-                    page.getMapConsecutiveStrings().put(lastWord, new HashSet<>());
-                }
-                page.getMapConsecutiveStrings().get(lastWord).add(currentString);
+            // within each page, add it to a hashmap that maps words to indices. Further, map
+            // indices to words as well. This allows for phrase queries
+            if (!page.getMapStringtoIndex().containsKey(currentString)) {
+                page.getMapStringtoIndex().put(currentString, new ArrayList<>());
             }
-            lastWord = currentString;
+            page.getMapStringtoIndex().get(currentString).add(wordIndex);
+
+            page.getMapIndextoString().add(currentString);
+
+            wordIndex++;
 //            System.out.print("(" + currentString + ")");
         }
     }
@@ -127,7 +129,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleOpenElement(String elementName, Map<String, String> attributes, int line, int col) {
 
         // do not parse certain tags that contain text that isn’t displayed on the screen
-        if (elementName.equals("style") || elementName.equals("script") || elementName.equals("span")) {
+        if (elementName.equals("style") || elementName.equals("script")) {
             parseText.push(false);
         } else {
             parseText.push(true);

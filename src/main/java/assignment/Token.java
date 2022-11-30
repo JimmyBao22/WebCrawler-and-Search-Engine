@@ -11,7 +11,7 @@ public class Token {
 
     public Token(String type, String word, boolean negation) {
         this.type = type;
-        this.word = word;
+        this.word = word.toLowerCase();
         this.negation = negation;
     }
 
@@ -45,5 +45,17 @@ public class Token {
 
     public boolean isOr() {
         return type.equals("Or");
+    }
+
+    public String toString() {
+        if (isWord()) {
+            return type + " " + word + " " + negation;
+        }
+        else if (isPhrase()) {
+            return type + " " + word;
+        }
+        else {
+            return type;
+        }
     }
 }

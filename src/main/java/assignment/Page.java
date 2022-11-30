@@ -1,9 +1,11 @@
 package assignment;
-import java.io.Serial;
+
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * The Page class holds anything that the QueryEngine returns to the server.  The field and method
@@ -18,7 +20,8 @@ public class Page implements Serializable {
     // The URL the page was located at.
     private URL url;
 
-    private HashMap<String, HashSet<String>> mapConsecutiveStrings;
+    private HashMap<String, List<Integer>> mapStringtoIndex;
+    private List<String> mapIndextoString;
 
     /**
      * Creates a Page with a given URL.
@@ -26,7 +29,8 @@ public class Page implements Serializable {
      */
     public Page(URL url) {
         this.url = url;
-        mapConsecutiveStrings = new HashMap<>();
+        mapStringtoIndex = new HashMap<>();
+        mapIndextoString = new ArrayList<>();
     }
 
     /**
@@ -34,7 +38,11 @@ public class Page implements Serializable {
      */
     public URL getURL() { return url; }
 
-    public HashMap<String, HashSet<String>> getMapConsecutiveStrings() {
-        return mapConsecutiveStrings;
+    public HashMap<String, List<Integer>> getMapStringtoIndex() {
+        return mapStringtoIndex;
+    }
+
+    public List<String> getMapIndextoString() {
+        return mapIndextoString;
     }
 }
