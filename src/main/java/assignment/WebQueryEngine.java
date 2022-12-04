@@ -71,7 +71,7 @@ public class WebQueryEngine {
     }
 
     // iterate over query tree by recursion
-    private Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
+    public Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
         if (current == null) {
             return null;
         }
@@ -136,7 +136,8 @@ public class WebQueryEngine {
                         List<Integer> indices = new ArrayList<>();
                         for (int k = 0; k < lastIndices.size(); k++) {
                             int lastIndex = lastIndices.get(k);
-                            if (page.getMapIndextoString().get(lastIndex + 1).equals(currentWord)) {
+                            if (lastIndex + 1 < page.getMapIndextoString().size() &&
+                                    page.getMapIndextoString().get(lastIndex + 1).equals(currentWord)) {
                                 indices.add(lastIndex + 1);
                             }
                         }
@@ -188,7 +189,7 @@ public class WebQueryEngine {
         return pages;
     }
 
-    private TreeNode parseQuery(ArrayDeque<Token> tokenList) {
+    public TreeNode parseQuery(ArrayDeque<Token> tokenList) {
         // detect whether or not an implicit and can occur
         boolean canBeImplicitAnd = false;
 
@@ -216,7 +217,7 @@ public class WebQueryEngine {
         return parseQueryPrime(copy);
     }
 
-    private TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
+    public TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
         if (tokenList.isEmpty()) {
             System.err.println("Invalid Query");
             return null;
@@ -249,7 +250,7 @@ public class WebQueryEngine {
         }
     }
 
-    private Token getToken(String query) {
+    public Token getToken(String query) {
         char c = query.charAt(0);
         if (c == '&') {
             return new Token("And");

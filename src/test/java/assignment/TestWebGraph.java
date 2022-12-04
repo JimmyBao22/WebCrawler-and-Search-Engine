@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,32 +19,36 @@ public class TestWebGraph {
     private WebIndex webIndex;
     private WebQueryEngine webQueryEngine;
 
-//    @Test
-//    public void testPhrase() throws FileNotFoundException {
-//        generateGraph(100, 100);
-//
-//        for (int i = 0; i < m; i++) {
-//            for (int j = i + 1; j < m; j++) {
-//                Collection<Page> ret = webQueryEngine.query(allStrings.get(i) + " " + allStrings.get(j));
-//
-//                Collection<String> correctWebPageLinks = new HashSet<>();
-//                for (int k = 0; k < n; k++) {
-//                    if (webPages[k].getWords().contains(allStrings.get(i)) &&
-//                            webPages[k].getWords().contains(allStrings.get(j))) {
-////                    System.out.println(webPages[j].getUrl());
-//                        correctWebPageLinks.add(webPages[k].getUrl());
-//                    }
-//                }
-//
-//                Assertions.assertEquals(correctWebPageLinks.size(), ret.size());
-//
-//                for (Page page : ret) {
-////                System.out.println(page.getURL().toString());
-//                    Assertions.assertTrue(correctWebPageLinks.contains(page.getURL().toString()));
-//                }
-//            }
-//        }
-//    }
+    @Test
+    public void testPhrase() throws FileNotFoundException {
+        generateGraph(100, 100);
+
+        for (int i = 0; i < m; i++) {
+            for (int j = i + 1; j < m; j++) {
+                Collection<Page> ret = webQueryEngine.query("\"" + allStrings.get(i) + " " + allStrings.get(j) + "\"");
+
+                Collection<String> correctWebPageLinks = new HashSet<>();
+                o: for (int k = 0; k < n; k++) {
+                    List<String> words = webPages[k].getWords();
+                    if (words.contains(allStrings.get(i)) && words.contains(allStrings.get(j))) {
+                        for (int t = 0; t < words.size() - 1; t++) {
+                            if (words.get(t).equals(allStrings.get(i)) && words.get(t+1).equals(allStrings.get(j))) {
+                                correctWebPageLinks.add(webPages[k].getUrl());
+                                continue o;
+                            }
+                        }
+                    }
+                }
+
+                Assertions.assertEquals(correctWebPageLinks.size(), ret.size());
+
+                for (Page page : ret) {
+//                System.out.println(page.getURL().toString());
+                    Assertions.assertTrue(correctWebPageLinks.contains(page.getURL().toString()));
+                }
+            }
+        }
+    }
 
     @Test
     public void testImplicitAnd() throws FileNotFoundException {
@@ -130,7 +133,7 @@ public class TestWebGraph {
 
     @Test
     public void testNegativeWord() throws FileNotFoundException {
-        generateGraph(1000, 1000);
+        generateGraph(500, 500);
 
         for (int i = 0; i < m; i++) {
             Collection<Page> ret = webQueryEngine.query("!" + allStrings.get(i));
@@ -154,7 +157,7 @@ public class TestWebGraph {
 
     @Test
     public void testWord() throws FileNotFoundException {
-        generateGraph(1000, 1000);
+        generateGraph(500, 500);
 
         for (int i = 0; i < m; i++) {
             Collection<Page> ret = webQueryEngine.query(allStrings.get(i));
@@ -178,7 +181,7 @@ public class TestWebGraph {
 
     @Test
     public void testGenerateGraph() throws FileNotFoundException {
-        generateGraph(1000, 1000);
+        generateGraph(500, 500);
     }
 
     public void generateGraph(int n, int m) throws FileNotFoundException {
