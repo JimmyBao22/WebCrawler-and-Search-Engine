@@ -54,11 +54,6 @@ public class WebCrawler {
                     url = new URL(url.toString().substring(0, url.toString().indexOf('#')));
                 }
 
-//                if (url.toString().contains("?")) {
-//                    System.out.println(url.toString());
-//                    url = new URL(url.toString().substring(0, url.toString().indexOf('?')));
-//                }
-
                 if (usedURLs.contains(url)) {
                     continue;
                 }
@@ -72,16 +67,6 @@ public class WebCrawler {
 
                     // Add any new URLs
                     remaining.addAll(handler.newURLs());
-//                    for (URL newURLS : handler.newURLs()) {
-//                        if (newURLS.toString().contains("#")) {
-//                            newURLS = new URL(newURLS.toString().substring(0, url.toString().indexOf('#')));
-//                        }
-//                        if (usedURLs.contains(newURLS)) {
-//                            continue;
-//                        }
-//                        usedURLs.add(newURLS);
-//                        remaining.add(newURLS);
-//                    }
 
                 } catch (Exception e) {
                     System.err.println("Unable to parse URL: " + url);

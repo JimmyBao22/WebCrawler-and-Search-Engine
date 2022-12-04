@@ -16,7 +16,7 @@ public class WebQueryEngine {
     private WebIndex index;
 
     public WebQueryEngine(WebIndex index) {
-        pages = new HashSet<Page>();
+        pages = new HashSet<>();
         this.index = index;
     }
 
@@ -37,8 +37,6 @@ public class WebQueryEngine {
      * @return A collection of web pages satisfying the query.
      */
     public Collection<Page> query(String queryString) {
-        // TODO: Implement this!
-
         ArrayDeque<Token> tokenList = new ArrayDeque<>();
         for (int i = 0; i < queryString.length(); i++) {
             if (queryString.charAt(i) == ' ') {
@@ -63,6 +61,7 @@ public class WebQueryEngine {
 //        while (!tokenList.isEmpty()) {
 //            System.out.println(tokenList.poll());
 //        }
+//        System.out.println();
 
         TreeNode root = parseQuery(tokenList);
 
@@ -73,17 +72,28 @@ public class WebQueryEngine {
 
     // iterate over query tree by recursion
     private Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
+        if (current == null) {
+            return null;
+        }
         Collection<Page> pages = new HashSet<>();
         Token currentToken = current.getToken();
         if (currentToken.isWord()) {
             // this is a word, search for it in the webindex
 
             if (currentToken.getNegation()) {
-                for (Page page : webIndex.getPages()) {
-                    // add page only if the page does not contain the word
-                    if (webIndex.getStringtoPages().get(currentToken.getWord()) != null &&
-                            !webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
-                        pages.add(page);
+                if (webIndex.getStringtoPages().get(currentToken.getWord()) == null) {
+                    pages = webIndex.getPages();
+                }
+                else {
+                    for (Page page : webIndex.getPages()) {
+                        if (webIndex.getStringtoPages().get(currentToken.getWord()) == null) {
+                            // edge case: if no pages contain this word, that means this page doesn't contain the word either
+                            pages.add(page);
+                        }
+                        else if (!webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
+                            // add page if the page does not contain the word
+                            pages.add(page);
+                        }
                     }
                 }
             }
@@ -207,8 +217,13 @@ public class WebQueryEngine {
     }
 
     private TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
-        // TODO can tokenlist be empty?
+        if (tokenList.isEmpty()) {
+            System.err.println("Invalid Query");
+            return null;
+        }
         Token currentToken = tokenList.poll();
+//        System.out.println(currentToken);
+
         if (currentToken.isLeftParens()) {
             // recursively build the left subtree
             TreeNode left = parseQueryPrime(tokenList);
@@ -253,16 +268,15 @@ public class WebQueryEngine {
             while (i < query.length() && isCharacter(query.charAt(i))) {
                 i++;
             }
-            i--;
             if (c == '!') {
-                return new Token("Word", query.substring(1, i+1), true);
+                return new Token("Word", query.substring(1, i), true);
             }
             else {
-                return new Token("Word", query.substring(0, i+1), false);
+                return new Token("Word", query.substring(0, i), false);
             }
         }
         else if (c == '"') {
-            return new Token("Phrase", query.substring(0, query.indexOf('"', 1)), false);
+            return new Token("Phrase", query.substring(1, query.indexOf('"', 1)), false);
         }
         else {
             System.err.println("Invalid Character in Query");

@@ -1,11 +1,10 @@
 package assignment;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestWebIndexTrie {
+public class TestWebIndex {
 
     @Test
     void testContains() throws IOException {
