@@ -12,11 +12,9 @@ import java.util.*;
  */
 public class WebQueryEngine {
 
-    private Collection<Page> pages;
     private WebIndex index;
 
     public WebQueryEngine(WebIndex index) {
-        pages = new HashSet<>();
         this.index = index;
     }
 
@@ -37,26 +35,7 @@ public class WebQueryEngine {
      * @return A collection of web pages satisfying the query.
      */
     public Collection<Page> query(String queryString) {
-        ArrayDeque<Token> tokenList = new ArrayDeque<>();
-        for (int i = 0; i < queryString.length(); i++) {
-            if (queryString.charAt(i) == ' ') {
-                continue;
-            }
-            Token current = getToken(queryString.substring(i));
-            if (current == null) {          // invalid query found
-                return null;
-            }
-            tokenList.add(current);
-            if (current.isWord() || current.isPhrase()) {
-                i += current.getWord().length() - 1;
-                if (current.getNegation()) {
-                    i++;
-                }
-                if (current.isPhrase()) {
-                    i += 2;
-                }
-            }
-        }
+        ArrayDeque<Token> tokenList = getTokenList(queryString);
 
 //        while (!tokenList.isEmpty()) {
 //            System.out.println(tokenList.poll());
@@ -79,21 +58,15 @@ public class WebQueryEngine {
         Token currentToken = current.getToken();
         if (currentToken.isWord()) {
             // this is a word, search for it in the webindex
-
             if (currentToken.getNegation()) {
-                if (webIndex.getStringtoPages().get(currentToken.getWord()) == null) {
-                    pages = webIndex.getPages();
-                }
-                else {
-                    for (Page page : webIndex.getPages()) {
-                        if (webIndex.getStringtoPages().get(currentToken.getWord()) == null) {
-                            // edge case: if no pages contain this word, that means this page doesn't contain the word either
-                            pages.add(page);
-                        }
-                        else if (!webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
-                            // add page if the page does not contain the word
-                            pages.add(page);
-                        }
+                for (Page page : webIndex.getPages()) {
+                    if (webIndex.getStringtoPages().get(currentToken.getWord()) == null) {
+                        // edge case: if no pages contain this word, that means this page doesn't contain the word either
+                        pages.add(page);
+                    }
+                    else if (!webIndex.getStringtoPages().get(currentToken.getWord()).contains(page)) {
+                        // add page if the page does not contain the word
+                        pages.add(page);
                     }
                 }
             }
@@ -103,7 +76,6 @@ public class WebQueryEngine {
                     pages = new HashSet<>();
                 }
             }
-            System.out.println(currentToken.getWord() + " " + pages.size());
         }
         else if (currentToken.isPhrase()) {
             // this is a phrase, search for full phrase in the webindex by iterating over phrase
@@ -133,6 +105,7 @@ public class WebQueryEngine {
                     HashMap<Page, List<Integer>> updatedWordIndices = new HashMap<>();
                     for (Page page : lastWordIndices.keySet()) {
                         List<Integer> lastIndices = lastWordIndices.get(page);
+                        // store indices that work using the last indices array
                         List<Integer> indices = new ArrayList<>();
                         for (int k = 0; k < lastIndices.size(); k++) {
                             int lastIndex = lastIndices.get(k);
@@ -157,11 +130,9 @@ public class WebQueryEngine {
             pages = lastWordIndices.keySet();
         }
         else {
+            // since this is an operator, search the left and right subtrees
             Collection<Page> leftPages = dfs(webIndex, current.getLeft());
             Collection<Page> rightPages = dfs(webIndex, current.getRight());
-
-            System.out.println("left: " + leftPages.size());
-            System.out.println("right: " + rightPages.size());
 
             if (currentToken.isAnd()) {
                 // add all pages that are in both left and right subtrees into the current page
@@ -223,7 +194,6 @@ public class WebQueryEngine {
             return null;
         }
         Token currentToken = tokenList.poll();
-//        System.out.println(currentToken);
 
         if (currentToken.isLeftParens()) {
             // recursively build the left subtree
@@ -248,6 +218,32 @@ public class WebQueryEngine {
             System.err.println("Unable to Parse Query");
             return null;
         }
+    }
+
+    public ArrayDeque<Token> getTokenList(String queryString) {
+        ArrayDeque<Token> tokenList = new ArrayDeque<>();
+        for (int i = 0; i < queryString.length(); i++) {
+            if (queryString.charAt(i) == ' ') {
+                // ignore all spaces
+                continue;
+            }
+            Token current = getToken(queryString.substring(i));
+            if (current == null) {
+                // invalid query found
+                return null;
+            }
+            tokenList.add(current);
+            if (current.isWord() || current.isPhrase()) {
+                i += current.getWord().length() - 1;
+                if (current.getNegation()) {
+                    i++;
+                }
+                if (current.isPhrase()) {
+                    i += 2;
+                }
+            }
+        }
+        return tokenList;
     }
 
     public Token getToken(String query) {

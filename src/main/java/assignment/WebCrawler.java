@@ -50,6 +50,11 @@ public class WebCrawler {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
                 URL url = remaining.poll();
+
+                // get rid of repeated URLs
+                if (url.toString().contains("?")) {
+                    url = new URL(url.toString().substring(0, url.toString().indexOf('?')));
+                }
                 if (url.toString().contains("#")) {
                     url = new URL(url.toString().substring(0, url.toString().indexOf('#')));
                 }

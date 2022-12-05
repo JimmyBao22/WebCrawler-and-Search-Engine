@@ -12,11 +12,11 @@ import java.util.List;
  * we provided here is the bare minimum requirement to be a Page - feel free to add anything you
  * want as long as you don't break the getURL method.
  *
- * TODO: Implement this!
  */
 public class Page implements Serializable {
 
     private static final long serialVersionUID = 6487935751107137193L;
+
     // The URL the page was located at.
     private URL url;
 

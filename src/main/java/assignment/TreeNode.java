@@ -2,7 +2,9 @@ package assignment;
 
 public class TreeNode {
 
+    // stores the corresponding token that is at this node
     private Token token;
+    // left and right children
     private TreeNode left, right;
 
     public TreeNode(Token token) {

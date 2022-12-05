@@ -5,49 +5,68 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
-public class TestPages {
+public class TestWebGraphEdgeCase {
 
     private int n, m;
+    private ArrayList<Integer>[] g;
     private List<String> allStrings;
     private WebPage[] webPages;
     private WebCrawler webCrawler;
     private WebIndex webIndex;
 
+    // tests graphs that don't go through all vertices
     @Test
-    public void testPages() throws FileNotFoundException {
+    public void testGenerateGraph() throws FileNotFoundException {
         generateGraph(500, 500);
+        // see how many links I can react through the graph
+        boolean[] visited = new boolean[n];
 
-        // for each webpage, check its instance variables
-        for (int i = 0; i < n; i++) {
-            // get the right page
-            Page current = null;
-            for (int j = 0; j < webIndex.getPages().size(); j++) {
-                current = (Page) ((ArrayList)(webIndex.getPages())).get(j);
-                if (webPages[i].getUrl().equals(current.getURL().toString())) {
-                    break;
-                }
-            }
-
-            Assertions.assertEquals(webPages[i].getUrl(), current.getURL().toString());
-
-            HashMap<String, List<Integer>> mapStringtoIndex = current.getMapStringtoIndex();
-            List<String> mapIndextoString = current.getMapIndextoString();
-
-            int firstIndex = mapStringtoIndex.get(webPages[i].getWords().get(0)).get(0);
-
-            for (int j = 0; j < webPages[i].getWords().size(); j++) {
-                String currentWord = webPages[i].getWords().get(j);
-                Assertions.assertTrue(mapStringtoIndex.containsKey(currentWord) && mapStringtoIndex.get(currentWord).contains(j + firstIndex));
-                Assertions.assertEquals(currentWord, mapIndextoString.get(j + firstIndex));
+        // do a dfs through the graph to see what pages would get visited
+        Stack<Integer> stack = new Stack<>();
+        stack.push(0);
+        while (!stack.isEmpty()) {
+            int cur = stack.pop();
+            if (visited[cur]) continue;
+            visited[cur] = true;
+            for (Integer to : g[cur]) {
+                stack.push(to);
             }
         }
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (visited[i]) {
+                count++;
+                // get the right page
+                boolean found = false;
+                Page current;
+                for (int j = 0; j < webIndex.getPages().size(); j++) {
+                    current = (Page) ((ArrayList)(webIndex.getPages())).get(j);
+                    if (webPages[i].getUrl().equals(current.getURL().toString())) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                // if the page was visited, it must have been found and added to webIndex
+                Assertions.assertEquals(true, found);
+            }
+        }
+
+        Assertions.assertEquals(count, webIndex.getPages().size());
     }
 
     public void generateGraph(int n, int m) throws FileNotFoundException {
         this.n = n;
         this.m = m;
+        g = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            g[i] = new ArrayList<>();
+        }
 
         // generate all strings that
         allStrings = new ArrayList<>();
@@ -62,16 +81,11 @@ public class TestPages {
             PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
             printWriter.println("<!DOCTYPE HTML>");
 
-            // first set up the links that this webpage points to.
+            // first set up the links that this webpage points to, and create the directed graph
             for (int j = 0; j < n; j++) {
-                // always point to the next one to make it easier
-                if (j == (i+1) % n) {
+                if (Math.random() < 0.33) {
                     printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
-                }
-                else {
-                    if (Math.random() < 0.33) {
-                        printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
-                    }
+                    g[i].add(j);
                 }
             }
 
@@ -92,8 +106,6 @@ public class TestPages {
         webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
 
         webIndex = (WebIndex) webCrawler.getHandler().getIndex();
-
-        Assertions.assertEquals(n, webIndex.getPages().size());
     }
 
     private class WebPage {

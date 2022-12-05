@@ -2,6 +2,7 @@ package assignment;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -11,15 +12,99 @@ import java.util.List;
 
 public class TestWebQueryEngine {
 
-    private int n, m;
-    private List<String> allStrings;
-    private WebPage[] webPages;
-    private WebCrawler webCrawler;
+    private int n;
     private WebIndex webIndex;
     private WebQueryEngine webQueryEngine;
 
-    public void testQuery() {
+    @Test
+    public void testQueries() {
+        testQueryAnd();
+        testQueryOr();
+        testQueryNegation();
+        testQueryPhrase();
+        testQueryImplicitAnd();
+        testComplexQuery1();
+        testComplexQuery2();
+    }
+
+    public void testComplexQuery2() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "(\"internet is a\" | danger) the (!hello | !hi)";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Or", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Phrase internet is a", treeNode.getLeft().getLeft().getToken().toString());
+        Assertions.assertEquals("Word danger false", treeNode.getLeft().getRight().getToken().toString());
+        Assertions.assertEquals("And", treeNode.getRight().getToken().toString());
+        Assertions.assertEquals("Word the false", treeNode.getRight().getLeft().getToken().toString());
+        Assertions.assertEquals("Or", treeNode.getRight().getRight().getToken().toString());
+        Assertions.assertEquals("Word hello true", treeNode.getRight().getRight().getLeft().getToken().toString());
+        Assertions.assertEquals("Word hi true", treeNode.getRight().getRight().getRight().getToken().toString());
+    }
+
+    public void testComplexQuery1() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "officials  (!hello | john)   senator";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Word officials false", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("And", treeNode.getRight().getToken().toString());
+        Assertions.assertEquals("Or", treeNode.getRight().getLeft().getToken().toString());
+        Assertions.assertEquals("Word senator false", treeNode.getRight().getRight().getToken().toString());
+        Assertions.assertEquals("Word hello true", treeNode.getRight().getLeft().getLeft().getToken().toString());
+        Assertions.assertEquals("Word john false", treeNode.getRight().getLeft().getRight().getToken().toString());
+    }
+
+    public void testQueryAnd() {
+        webQueryEngine = new WebQueryEngine(webIndex);
         String testString = "(should & quiet)";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Word should false", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
+    }
+
+    public void testQueryOr() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "(should | quiet)";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("Or", treeNode.getToken().toString());
+        Assertions.assertEquals("Word should false", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
+    }
+
+    public void testQueryNegation() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "(!should & !quiet)";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Word should true", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Word quiet true", treeNode.getRight().getToken().toString());
+    }
+
+    public void testQueryPhrase() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "(\"should we\" & quiet)";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Phrase should we", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
+    }
+
+    public void testQueryImplicitAnd() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "should quiet";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("And", treeNode.getToken().toString());
+        Assertions.assertEquals("Word should false", treeNode.getLeft().getToken().toString());
+        Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
     }
 
     @RepeatedTest(1000)
@@ -67,26 +152,7 @@ public class TestWebQueryEngine {
         }
         String queryString = query.toString();
 
-        ArrayDeque<Token> tokenList = new ArrayDeque<>();
-        for (int i = 0; i < queryString.length(); i++) {
-            if (queryString.charAt(i) == ' ') {
-                continue;
-            }
-            Token current = webQueryEngine.getToken(queryString.substring(i));
-            if (current == null) {          // invalid query found
-                Assertions.assertTrue(false);
-            }
-            tokenList.add(current);
-            if (current.isWord() || current.isPhrase()) {
-                i += current.getWord().length() - 1;
-                if (current.getNegation()) {
-                    i++;
-                }
-                if (current.isPhrase()) {
-                    i += 2;
-                }
-            }
-        }
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(queryString);
 
         Assertions.assertEquals(correctTokenList.size(), tokenList.size());
 
@@ -99,77 +165,6 @@ public class TestWebQueryEngine {
         }
     }
 
-    public void generateGraph(int n, int m) throws FileNotFoundException {
-        this.n = n;
-        this.m = m;
-
-        // generate all strings that
-        allStrings = new ArrayList<>();
-        for (int i = 0; i < m; i++) {
-            allStrings.add(generateString());
-        }
-
-        webPages = new WebPage[n];
-        // generate the files
-        for (int i = 0; i < n; i++) {
-            webPages[i] = new WebPage("file:/Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
-            PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
-            printWriter.println("<!DOCTYPE HTML>");
-
-            // first set up the links that this webpage points to.
-            for (int j = 0; j < n; j++) {
-                // always point to the next one to make it easier
-                if (j == (i+1) % n) {
-                    printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
-                }
-                else {
-                    if (Math.random() < 0.33) {
-                        printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
-                    }
-                }
-            }
-
-            // write the text
-            printWriter.print("<p>");
-            for (String string : allStrings) {
-                if (Math.random() < 0.33) {
-                    printWriter.print(string + " ");
-                    webPages[i].getWords().add(string);
-                }
-            }
-            printWriter.println("</p>");
-
-            printWriter.close();
-        }
-
-        webCrawler = new WebCrawler();
-        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
-
-        webIndex = (WebIndex) webCrawler.getHandler().getIndex();
-
-        Assertions.assertEquals(n, webIndex.getPages().size());
-
-        webQueryEngine = new WebQueryEngine(webIndex);
-    }
-
-    private class WebPage {
-        private List<String> words;
-        private String url;
-
-        public WebPage(String url) {
-            words = new ArrayList<>();
-            this.url = url;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public List<String> getWords() {
-            return words;
-        }
-    }
-
     private String generateString() {
         int length = (int)(Math.random() * 10) + 1;
         StringBuilder sb = new StringBuilder();
@@ -178,10 +173,5 @@ public class TestWebQueryEngine {
             sb.append(c);
         }
         return sb.toString();
-    }
-
-    private boolean isCharacter(char i) {
-        char c = String.valueOf(i).toLowerCase().charAt(0);
-        return (c - 'a' >= 0 && c - 'z' <= 0) || (c - '0' >= 0 && c - '9' <= 0);
     }
 }

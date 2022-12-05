@@ -1,6 +1,5 @@
 package assignment;
 
-import java.io.File;
 import java.util.*;
 import java.net.*;
 import org.attoparser.simple.*;
@@ -102,11 +101,9 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 webIndex.getStringtoPages().put(currentString, new HashSet<>());
             }
             webIndex.getStringtoPages().get(currentString).add(page);
-            System.out.println(currentString + " " + webIndex.getStringtoPages().get(currentString).size());
-
 
             // within each page, add it to a hashmap that maps words to indices. Further, map
-            // indices to words as well. This allows for phrase queries
+                // indices to words as well. This allows for phrase queries
             if (!page.getMapStringtoIndex().containsKey(currentString)) {
                 page.getMapStringtoIndex().put(currentString, new ArrayList<>());
             }
@@ -115,7 +112,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             page.getMapIndextoString().add(currentString);
 
             wordIndex++;
-//            System.out.print("(" + currentString + ")");
         }
     }
 
@@ -131,7 +127,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         // do not parse certain tags that contain text that isn’t displayed on the screen
         if (elementName.equals("style") || elementName.equals("script")) {
             parseText.push(false);
-        } else {
+        }
+        else {
             parseText.push(true);
             allText.append(" ");
         }
@@ -142,7 +139,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 URL newURL = new URL(url, attributes.get("href"));
 
                 urls.add(newURL);
-//                System.out.println("HERE " + url.toString() + " " + attributes.get("href") + " " + urlLink);
             } catch (MalformedURLException e) {
                 System.err.println("Malformed URL discovered");
             }
@@ -174,6 +170,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             return;
         }
 
+        // add all text to a stringbuilder in order to parse all text at once at the end of the document
         for(int i = start; i < start + length; i++) {
             if (isCharacter(ch[i])) {
                 allText.append(ch[i]);

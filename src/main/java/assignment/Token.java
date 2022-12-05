@@ -2,6 +2,7 @@ package assignment;
 
 public class Token {
 
+    // stores the type of the token. If it is a word/phrase, it also stores the word/phrase
     private String type, word;
     private boolean negation;
 
