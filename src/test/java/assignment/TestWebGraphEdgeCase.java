@@ -20,8 +20,8 @@ public class TestWebGraphEdgeCase {
 
     // tests graphs that don't go through all vertices
     @Test
-    public void testGenerateGraph() throws FileNotFoundException {
-        generateGraph(500, 500);
+    public void testGenerateGraphEdgeCase() throws FileNotFoundException {
+        generateGraphEdgeCase(500, 500);
         // see how many links I can react through the graph
         boolean[] visited = new boolean[n];
 
@@ -60,7 +60,7 @@ public class TestWebGraphEdgeCase {
         Assertions.assertEquals(count, webIndex.getPages().size());
     }
 
-    public void generateGraph(int n, int m) throws FileNotFoundException {
+    public void generateGraphEdgeCase(int n, int m) throws FileNotFoundException {
         this.n = n;
         this.m = m;
         g = new ArrayList[n];
@@ -106,6 +106,83 @@ public class TestWebGraphEdgeCase {
         webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
 
         webIndex = (WebIndex) webCrawler.getHandler().getIndex();
+    }
+
+    @Test
+    public void testGenerateGraphEdgeCase2() throws FileNotFoundException {
+        generateGraphEdgeCase2(500, 500);
+    }
+
+    // ensure that all webpages included don't have # and ?
+    public void generateGraphEdgeCase2(int n, int m) throws FileNotFoundException {
+        this.n = n;
+        this.m = m;
+
+        // generate all strings that
+        allStrings = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            allStrings.add(generateString());
+        }
+
+        webPages = new WebPage[n];
+        // generate the files
+        for (int i = 0; i < n; i++) {
+            webPages[i] = new WebPage("file:/Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
+            PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
+            printWriter.println("<!DOCTYPE HTML>");
+
+            // first set up the links that this webpage points to.
+            for (int j = 0; j < n; j++) {
+                // always point to the next one to make it easier
+                if (j == (i+1) % n) {
+                    printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
+                }
+                else {
+                    if (Math.random() < 0.33) {
+                        printWriter.println("<a href=\"file" + j + ".html\">file" + j + ".html</a>");
+                    }
+                }
+
+                if (Math.random() < 0.2) {
+                    printWriter.println("<a href=\"file" + j + ".html?a\">file" + j + ".html</a>");
+                }
+                if (Math.random() < 0.2) {
+                    printWriter.println("<a href=\"file" + j + ".html#a\">file" + j + ".html</a>");
+                }
+                if (Math.random() < 0.2) {
+                    printWriter.println("<a href=\"file" + j + ".html?a#b\">file" + j + ".html</a>");
+                }
+            }
+
+            // write the text
+            printWriter.print("<p>");
+            for (String string : allStrings) {
+                if (Math.random() < 0.33) {
+                    printWriter.print(string + " ");
+                    webPages[i].getWords().add(string);
+                }
+            }
+            printWriter.println("</p>");
+
+            printWriter.close();
+        }
+
+        webCrawler = new WebCrawler();
+        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
+
+        webIndex = (WebIndex) webCrawler.getHandler().getIndex();
+        ArrayList<Page> pages = (ArrayList<Page>) webIndex.getPages();
+
+        for (int i = 0; i < pages.size(); i++) {
+            Assertions.assertTrue(!pages.get(i).getURL().toString().contains("?"));
+            Assertions.assertTrue(!pages.get(i).getURL().toString().contains("#"));
+        }
+    }
+
+    @Test
+    public void testInvalidCases() {
+        webCrawler.main(new String[]{});
+        webCrawler.main(new String[]{"bad file path"});
     }
 
     private class WebPage {

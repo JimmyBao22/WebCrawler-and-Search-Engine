@@ -52,7 +52,7 @@ public class WebQueryEngine {
     // iterate over query tree by recursion
     public Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
         if (current == null) {
-            return null;
+            return new HashSet<>();
         }
         Collection<Page> pages = new HashSet<>();
         Token currentToken = current.getToken();

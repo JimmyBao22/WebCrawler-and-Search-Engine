@@ -31,8 +31,6 @@ public class WebServer {
         engine = wqe;
     }
 
-
-
     /**
      * Open the server to incoming connections, loop and respond.
      */
