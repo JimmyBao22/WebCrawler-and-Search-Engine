@@ -5,12 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
-public class TestWebIndex {
+public class TestPages {
 
     private int n, m;
     private List<String> allStrings;
@@ -19,25 +16,32 @@ public class TestWebIndex {
     private WebIndex webIndex;
 
     @Test
-    public void testWebIndexMap() throws FileNotFoundException {
-        generateGraph(500, 500);
+    public void testPages() throws FileNotFoundException {
+        generateGraph(10, 10);
 
-        for (int i = 0; i < m; i++) {
-            Collection<Page> ret = webIndex.getStringtoPages().get(allStrings.get(i));
-
-            Collection<String> correctWebPageLinks = new HashSet<>();
-            for (int j = 0; j < n; j++) {
-                if (webPages[j].getWords().contains(allStrings.get(i))) {
-//                    System.out.println(webPages[j].getUrl());
-                    correctWebPageLinks.add(webPages[j].getUrl());
+        // for each webpage, check its instance variables
+        for (int i = 0; i < n; i++) {
+            System.out.println(i);
+            // get the right page
+            Page current = null;
+            for (int j = 0; j < webIndex.getPages().size(); j++) {
+                current = (Page) ((ArrayList)(webIndex.getPages())).get(j);
+                if (webPages[i].getUrl().equals(current.getURL().toString())) {
+                    break;
                 }
             }
 
-            Assertions.assertEquals(correctWebPageLinks.size(), ret.size());
+            Assertions.assertEquals(webPages[i].getUrl(), current.getURL().toString());
 
-            for (Page page : ret) {
-//                System.out.println(page.getURL().toString());
-                Assertions.assertTrue(correctWebPageLinks.contains(page.getURL().toString()));
+            HashMap<String, List<Integer>> mapStringtoIndex = current.getMapStringtoIndex();
+            List<String> mapIndextoString = current.getMapIndextoString();
+
+            int firstIndex = mapStringtoIndex.get(webPages[i].getWords().get(0)).get(0);
+
+            for (int j = 0; j < webPages[i].getWords().size(); j++) {
+                String currentWord = webPages[i].getWords().get(j);
+                Assertions.assertTrue(mapStringtoIndex.containsKey(currentWord) && mapStringtoIndex.get(currentWord).contains(j + firstIndex));
+                Assertions.assertEquals(currentWord, mapIndextoString.get(j + firstIndex));
             }
         }
     }
