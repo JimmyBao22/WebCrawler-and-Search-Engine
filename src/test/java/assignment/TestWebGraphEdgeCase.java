@@ -77,7 +77,7 @@ public class TestWebGraphEdgeCase {
         webPages = new WebPage[n];
         // generate the files
         for (int i = 0; i < n; i++) {
-            webPages[i] = new WebPage("file:/Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
+            webPages[i] = new WebPage("file:/Users/[name]/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
             PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
             printWriter.println("<!DOCTYPE HTML>");
 
@@ -103,7 +103,7 @@ public class TestWebGraphEdgeCase {
         }
 
         webCrawler = new WebCrawler();
-        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
+        webCrawler.main(new String[]{"file:///Users/[name]/CS/School/CS314H/prog7/testingFiles/file0.html"});
 
         webIndex = (WebIndex) webCrawler.getHandler().getIndex();
     }
@@ -127,7 +127,7 @@ public class TestWebGraphEdgeCase {
         webPages = new WebPage[n];
         // generate the files
         for (int i = 0; i < n; i++) {
-            webPages[i] = new WebPage("file:/Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
+            webPages[i] = new WebPage("file:/Users/[name]/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
             PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
             printWriter.println("<!DOCTYPE HTML>");
 
@@ -168,7 +168,7 @@ public class TestWebGraphEdgeCase {
         }
 
         webCrawler = new WebCrawler();
-        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
+        webCrawler.main(new String[]{"file:///Users/[name]/CS/School/CS314H/prog7/testingFiles/file0.html"});
 
         webIndex = (WebIndex) webCrawler.getHandler().getIndex();
         ArrayList<Page> pages = (ArrayList<Page>) webIndex.getPages();

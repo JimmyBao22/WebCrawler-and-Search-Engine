@@ -197,7 +197,7 @@ public class TestWebGraph {
         webPages = new WebPage[n];
         // generate the files
         for (int i = 0; i < n; i++) {
-            webPages[i] = new WebPage("file:/Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
+            webPages[i] = new WebPage("file:/Users/[name]/CS/School/CS314H/prog7/testingFiles/file" + i + ".html");
             PrintWriter printWriter = new PrintWriter("testingFiles/file" + i + ".html");
             printWriter.println("<!DOCTYPE HTML>");
 
@@ -228,7 +228,7 @@ public class TestWebGraph {
         }
 
         webCrawler = new WebCrawler();
-        webCrawler.main(new String[]{"file:///Users/jimmybao/CS/School/CS314H/prog7/testingFiles/file0.html"});
+        webCrawler.main(new String[]{"file:///Users/[name]/CS/School/CS314H/prog7/testingFiles/file0.html"});
 
         webIndex = (WebIndex) webCrawler.getHandler().getIndex();
 
