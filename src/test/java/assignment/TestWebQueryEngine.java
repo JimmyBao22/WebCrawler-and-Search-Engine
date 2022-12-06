@@ -18,6 +18,7 @@ public class TestWebQueryEngine {
 
     @Test
     public void testQueries() {
+        testQuery();
         testQueryAnd();
         testQueryOr();
         testQueryNegation();
@@ -105,6 +106,14 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("And", treeNode.getToken().toString());
         Assertions.assertEquals("Word should false", treeNode.getLeft().getToken().toString());
         Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
+    }
+
+    public void testQuery() {
+        webQueryEngine = new WebQueryEngine(webIndex);
+        String testString = "should";
+        ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
+        TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
+        Assertions.assertEquals("Word should false", treeNode.getToken().toString());
     }
 
     @RepeatedTest(1000)
