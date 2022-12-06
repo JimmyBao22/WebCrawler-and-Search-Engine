@@ -37,21 +37,15 @@ public class WebQueryEngine {
     public Collection<Page> query(String queryString) {
         ArrayDeque<Token> tokenList = getTokenList(queryString);
 
-//        while (!tokenList.isEmpty()) {
-//            System.out.println(tokenList.poll());
-//        }
-//        System.out.println();
-
         TreeNode root = parseQuery(tokenList);
 
         Collection<Page> queriedPages = dfs(index, root);
-        System.out.println(queriedPages.size());
         return queriedPages;
     }
 
     // iterate over query tree by recursion
     public Collection<Page> dfs(WebIndex webIndex, TreeNode current) {
-        if (current == null) {
+        if (current == null || current.getToken() == null) {
             return new HashSet<>();
         }
         Collection<Page> pages = new HashSet<>();
@@ -162,6 +156,9 @@ public class WebQueryEngine {
 
     public TreeNode parseQuery(ArrayDeque<Token> tokenList) {
         // detect whether or not an implicit and can occur
+        if (tokenList == null) {
+            return null;
+        }
         boolean canBeImplicitAnd = false;
 
         ArrayDeque<Token> copy = new ArrayDeque<>();

@@ -86,10 +86,6 @@ public class WebCrawler {
             e.printStackTrace();
             System.exit(1);
         }
-
-        System.out.println();
-        System.out.println(((WebIndex)(handler.getIndex())).getPages().size());
-        System.out.println(count);
     }
 
     public CrawlingMarkupHandler getHandler() {
