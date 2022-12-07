@@ -5,6 +5,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class TestWebQueryEngine {
     private WebQueryEngine webQueryEngine;
 
     @Test
-    public void testQueries() {
+    public void testQueries() throws IOException, ClassNotFoundException {
         testQuery();
         testQueryAnd();
         testQueryOr();
@@ -28,8 +29,9 @@ public class TestWebQueryEngine {
         testComplexQuery2();
     }
 
-    public void testComplexQuery2() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testComplexQuery2() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "(\"internet is a\" | danger) the (!hello | !hi)";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -44,8 +46,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word hi true", treeNode.getRight().getRight().getRight().getToken().toString());
     }
 
-    public void testComplexQuery1() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testComplexQuery1() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "officials  (!hello | john)   senator";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -58,8 +61,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word john false", treeNode.getRight().getLeft().getRight().getToken().toString());
     }
 
-    public void testQueryAnd() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQueryAnd() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "(should & quiet)";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -68,8 +72,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
     }
 
-    public void testQueryOr() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQueryOr() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "(should | quiet)";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -78,8 +83,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
     }
 
-    public void testQueryNegation() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQueryNegation() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "(!should & !quiet)";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -88,8 +94,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word quiet true", treeNode.getRight().getToken().toString());
     }
 
-    public void testQueryPhrase() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQueryPhrase() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "(\"should we\" & quiet)";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -98,8 +105,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
     }
 
-    public void testQueryImplicitAnd() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQueryImplicitAnd() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "should quiet";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -108,8 +116,9 @@ public class TestWebQueryEngine {
         Assertions.assertEquals("Word quiet false", treeNode.getRight().getToken().toString());
     }
 
-    public void testQuery() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testQuery() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
         String testString = "should";
         ArrayDeque<Token> tokenList = webQueryEngine.getTokenList(testString);
         TreeNode treeNode = webQueryEngine.parseQuery(tokenList);
@@ -117,8 +126,9 @@ public class TestWebQueryEngine {
     }
 
     @RepeatedTest(1000)
-    public void testTokenGeneration() {
-        webQueryEngine = new WebQueryEngine(webIndex);
+    public void testTokenGeneration() throws IOException, ClassNotFoundException {
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
 
         n = 1000;
 

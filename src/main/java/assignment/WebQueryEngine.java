@@ -14,7 +14,7 @@ public class WebQueryEngine {
 
     private WebIndex index;
 
-    public WebQueryEngine(WebIndex index) {
+    private WebQueryEngine(WebIndex index) {
         this.index = index;
     }
 

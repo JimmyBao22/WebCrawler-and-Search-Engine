@@ -25,7 +25,6 @@ public class WebCrawler {
         // Basic usage information
         if (args.length == 0) {
             System.err.println("Error: No URLs specified.");
-            System.exit(1);
         }
 
         // We'll throw all the args into a queue for processing.
@@ -45,7 +44,6 @@ public class WebCrawler {
         usedURLs = new HashSet<>();
 
         // Try to start crawling, adding new URLS as we see them.
-        int count = 0;
         try {
             while (!remaining.isEmpty()) {
                 // Parse the next URL's page
@@ -63,7 +61,6 @@ public class WebCrawler {
                     continue;
                 }
                 usedURLs.add(url);
-                count++;
 
                 try {
                     handler.setUrl(url);
@@ -84,7 +81,6 @@ public class WebCrawler {
             // Bad exception handling :(
             System.err.println("Error: Index generation failed!");
             e.printStackTrace();
-            System.exit(1);
         }
     }
 

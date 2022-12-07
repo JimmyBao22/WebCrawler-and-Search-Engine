@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +21,7 @@ public class TestWebGraph {
     private WebQueryEngine webQueryEngine;
 
     @Test
-    public void testPhrase() throws FileNotFoundException {
+    public void testPhrase() throws IOException, ClassNotFoundException {
         generateGraph(100, 100);
 
         for (int i = 0; i < m; i++) {
@@ -51,7 +52,7 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testImplicitAnd() throws FileNotFoundException {
+    public void testImplicitAnd() throws IOException, ClassNotFoundException {
         generateGraph(100, 100);
 
         for (int i = 0; i < m; i++) {
@@ -78,7 +79,7 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testOr() throws FileNotFoundException {
+    public void testOr() throws IOException, ClassNotFoundException {
         generateGraph(100, 100);
 
         for (int i = 0; i < m; i++) {
@@ -105,7 +106,7 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testAnd() throws FileNotFoundException {
+    public void testAnd() throws IOException, ClassNotFoundException {
         generateGraph(100, 100);
 
         for (int i = 0; i < m; i++) {
@@ -132,7 +133,7 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testNegativeWord() throws FileNotFoundException {
+    public void testNegativeWord() throws IOException, ClassNotFoundException {
         generateGraph(500, 500);
 
         for (int i = 0; i < m; i++) {
@@ -156,7 +157,7 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testWord() throws FileNotFoundException {
+    public void testWord() throws IOException, ClassNotFoundException {
         generateGraph(500, 500);
 
         for (int i = 0; i < m; i++) {
@@ -180,11 +181,11 @@ public class TestWebGraph {
     }
 
     @Test
-    public void testGenerateGraph() throws FileNotFoundException {
+    public void testGenerateGraph() throws IOException, ClassNotFoundException {
         generateGraph(500, 500);
     }
 
-    public void generateGraph(int n, int m) throws FileNotFoundException {
+    public void generateGraph(int n, int m) throws IOException, ClassNotFoundException {
         this.n = n;
         this.m = m;
 
@@ -234,7 +235,8 @@ public class TestWebGraph {
 
         Assertions.assertEquals(n, webIndex.getPages().size());
 
-        webQueryEngine = new WebQueryEngine(webIndex);
+        webQueryEngine = WebQueryEngine.fromIndex(
+                (WebIndex) Index.load("index.db"));
     }
 
     private class WebPage {
