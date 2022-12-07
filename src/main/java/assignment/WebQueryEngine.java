@@ -35,6 +35,11 @@ public class WebQueryEngine {
      * @return A collection of web pages satisfying the query.
      */
     public Collection<Page> query(String queryString) {
+        if (queryString == null) {
+            System.err.println("Invalid Query");
+            return new HashSet<>();
+        }
+
         ArrayDeque<Token> tokenList = getTokenList(queryString);
 
         TreeNode root = parseQuery(tokenList);
