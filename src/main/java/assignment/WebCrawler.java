@@ -18,8 +18,8 @@ public class WebCrawler {
     private static HashSet<URL> usedURLs;
 
     /**
-    * The WebCrawler's main method starts crawling a set of pages.  You can change this method as
-    * you see fit, as long as it takes URLs as inputs and saves an Index at "index.db".
+    * The WebCrawler's main method starts crawling a set of pages. Takes URLs as inputs and saves an 
+    * Index at "index.db".
     */
     public static void main(String[] args) {
         // Basic usage information
