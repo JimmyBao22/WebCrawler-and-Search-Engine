@@ -14,7 +14,7 @@ file://<absolute-path-to-file>
 
 For example, on the command line, using linux:
 
-java -cp attoparser-2.0.0.BETA2.jar:bin assignment.WebCrawler file:///<path-to-project>/president96/index.html
+java -cp attoparser-2.0.0.BETA2.jar:bin assignment.WebCrawler file:///\<path-to-project\>/president96/index.html
 
 This should run your crawler and save an index to "index.db"!
 
