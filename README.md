@@ -10,7 +10,7 @@ First, make sure you add the attoparser library to your classpath! Then, you can
 class, providing it ABSOLUTE URLS, on the two provided testing websites. Absolute URLS are prefixed
 by "file://", and look something like this:
 
-file://<absolute-path-to-file>
+file://\<absolute-path-to-file\>
 
 For example, on the command line, using linux:
 
