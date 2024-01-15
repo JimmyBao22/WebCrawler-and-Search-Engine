@@ -62,14 +62,14 @@ If a query consists of consecutive words (not in quotation marks), the engine se
 
 This is the specific grammar that the parser follows. All valid queries will follow this 
 
-Query → Query’ Query
-Query → Query’
-Query’ → ( Query’ & Query’ )
-Query’ → ( Query’ | Query’ )
-Query’ → word
-Query’ → !word
-Query’ → "Words"
-Words → word Words
+Query → Query’ Query\
+Query → Query'\
+Query’ → ( Query’ & Query’ )\
+Query’ → ( Query’ | Query’ )\
+Query’ → word\
+Query’ → !word\
+Query’ → "Words"\
+Words → word Words\
 Words → word
 
 For example, foo bar | baz isn’t a valid query since the OR is not parenthesized.
