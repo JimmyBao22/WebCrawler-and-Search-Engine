@@ -39,7 +39,8 @@ public class TestPages {
 
             for (int j = 0; j < webPages[i].getWords().size(); j++) {
                 String currentWord = webPages[i].getWords().get(j);
-                Assertions.assertTrue(mapStringtoIndex.containsKey(currentWord) && mapStringtoIndex.get(currentWord).contains(j + firstIndex));
+                Assertions.assertTrue(mapStringtoIndex.containsKey(currentWord)
+                        && mapStringtoIndex.get(currentWord).contains(j + firstIndex));
                 Assertions.assertEquals(currentWord, mapIndextoString.get(j + firstIndex));
             }
         }

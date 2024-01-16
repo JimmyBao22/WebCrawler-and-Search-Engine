@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b83f99dd-fada-482a-a85f-01e8029eb0ea" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2IQxXcGFmiJyTPRC5wxmWPtGv6W" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-18&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Application.WebCrawler">
+    <configuration name="WebCrawler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="assignment.WebCrawler" />
+      <module name="prog7" />
+      <option name="PROGRAM_PARAMETERS" value="file://$PROJECT_DIR$/president96/index.html " />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="assignment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WebServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="assignment.WebServer" />
+      <module name="prog7" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="assignment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestWebGraphEdgeCase.testGenerateGraphEdgeCase2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="prog7" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="assignment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="assignment" />
+      <option name="MAIN_CLASS_NAME" value="assignment.TestWebGraphEdgeCase" />
+      <option name="METHOD_NAME" value="testGenerateGraphEdgeCase2" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestWebQueryEngine.testComplexQuery2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="prog7" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="assignment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="assignment" />
+      <option name="MAIN_CLASS_NAME" value="assignment.TestWebQueryEngine" />
+      <option name="METHOD_NAME" value="testComplexQuery2" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestWebQueryEngine.testQueries" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="prog7" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="assignment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="assignment" />
+      <option name="MAIN_CLASS_NAME" value="assignment.TestWebQueryEngine" />
+      <option name="METHOD_NAME" value="testQueries" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.WebServer" />
+      <item itemvalue="Application.WebCrawler" />
+      <item itemvalue="JUnit.TestWebGraphEdgeCase.testGenerateGraphEdgeCase2" />
+      <item itemvalue="JUnit.TestWebQueryEngine.testComplexQuery2" />
+      <item itemvalue="JUnit.TestWebQueryEngine.testQueries" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.WebCrawler" />
+        <item itemvalue="Application.WebServer" />
+        <item itemvalue="JUnit.TestWebQueryEngine.testQueries" />
+        <item itemvalue="JUnit.TestWebGraphEdgeCase.testGenerateGraphEdgeCase2" />
+        <item itemvalue="JUnit.TestWebQueryEngine.testComplexQuery2" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b83f99dd-fada-482a-a85f-01e8029eb0ea" name="Changes" comment="" />
+      <created>1670127648692</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1670127648692</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Added graph tests for web query engine">
+      <created>1670189187789</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1670189187789</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Completed Tests for Pages">
+      <created>1670210986995</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1670210986995</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added comments">
+      <created>1670224639433</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1670224639433</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added more tests">
+      <created>1670280124347</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1670280124347</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Changed bugs">
+      <created>1670302461714</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1670302461714</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Got rid of all print statements">
+      <created>1670310236898</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1670310236898</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Got rid of my name">
+      <created>1670368288849</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1670368288849</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Made web query engine constructor private">
+      <created>1670377265650</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1670377265650</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Final Commit">
+      <created>1670378641601</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1670378641601</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added graph tests for web query engine" />
+    <MESSAGE value="Completed Tests for Pages" />
+    <MESSAGE value="Added comments" />
+    <MESSAGE value="Added more tests" />
+    <MESSAGE value="Changed bugs" />
+    <MESSAGE value="Got rid of all print statements" />
+    <MESSAGE value="Got rid of my name" />
+    <MESSAGE value="Made web query engine constructor private" />
+    <MESSAGE value="Final Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final Commit" />
+  </component>
+</project>
