@@ -46,12 +46,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
     /**
     * These are some of the methods from AbstractSimpleMarkupHandler.
-    * All of its method implementations are NoOps, so we've added some things
-    * to do; please remove all the extra printing before you turn in your code.
     *
-    * Note: each of these methods defines a line and col param, but you probably
-    * don't need those values. You can look at the documentation for the
-    * superclass to see all of the handler methods.
+    * Look at the documentation for the superclass to see all of the handler methods.
     */
 
     /**

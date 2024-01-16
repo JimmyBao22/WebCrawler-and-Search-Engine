@@ -18,7 +18,7 @@ public class WebCrawler {
     private static HashSet<URL> usedURLs;
 
     /**
-    * The WebCrawler's main method starts crawling a set of pages. Takes URLs as inputs and saves an 
+    * The WebCrawler's main method starts crawling a set of pages. Takes URLs as inputs and saves an
     * Index at "index.db".
     */
     public static void main(String[] args) {

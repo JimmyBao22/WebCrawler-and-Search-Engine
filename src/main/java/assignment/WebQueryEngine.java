@@ -100,7 +100,8 @@ public class WebQueryEngine {
                     }
                 }
                 else {
-                    // only add pages that contain a phrase with the current and last words consecutively appearing on the webpage
+                    // only add pages that contain a phrase with the current and last words consecutively appearing on
+                    // the webpage
                     HashMap<Page, List<Integer>> updatedWordIndices = new HashMap<>();
                     for (Page page : lastWordIndices.keySet()) {
                         List<Integer> lastIndices = lastWordIndices.get(page);
@@ -190,7 +191,7 @@ public class WebQueryEngine {
         return parseQueryPrime(copy);
     }
 
-    public TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
+    private TreeNode parseQueryPrime(ArrayDeque<Token> tokenList) {
         if (tokenList.isEmpty()) {
             System.err.println("Invalid Query");
             return null;
@@ -283,7 +284,7 @@ public class WebQueryEngine {
         }
     }
 
-    private boolean isCharacter(char i) {
+    public boolean isCharacter(char i) {
         char c = String.valueOf(i).toLowerCase().charAt(0);
         return (c - 'a' >= 0 && c - 'z' <= 0) || (c - '0' >= 0 && c - '9' <= 0);
     }
