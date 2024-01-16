@@ -8,10 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * The Page class holds anything that the QueryEngine returns to the server.  The field and method
- * we provided here is the bare minimum requirement to be a Page - feel free to add anything you
- * want as long as you don't break the getURL method.
- *
+ * The Page class holds anything that the QueryEngine returns to the server.
  */
 public class Page implements Serializable {
 

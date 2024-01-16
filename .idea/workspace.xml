@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b83f99dd-fada-482a-a85f-01e8029eb0ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/Page.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/Page.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
