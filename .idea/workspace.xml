@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b83f99dd-fada-482a-a85f-01e8029eb0ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/CrawlingMarkupHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebCrawler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assignment/WebQueryEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/assignment/TestPages.java" afterDir="false" />
-    </list>
+    <list default="true" id="b83f99dd-fada-482a-a85f-01e8029eb0ea" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
